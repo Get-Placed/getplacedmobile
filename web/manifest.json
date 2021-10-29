@@ -1,6 +1,6 @@
 {
-    "name": "get_placed",
-    "short_name": "get_placed",
+    "name": "placement_cell",
+    "short_name": "placement_cell",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
