@@ -2,10 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:placement_cell/admin/collegeAdmin/collegeHome.dart';
+import 'package:placement_cell/admin/collegeAdmin/AllStudentsApplied.dart';
+import 'package:placement_cell/admin/collegeAdmin/CollegeNavTab.dart';
 import 'package:placement_cell/admin/compAdmin/compHome.dart';
 import 'package:placement_cell/admin/compAdmin/compNavTab.dart';
 import 'package:placement_cell/admin/dashboard.dart';
+import 'package:placement_cell/components/StudentController.dart';
+import 'package:placement_cell/pages/EmailVerified.dart';
 import 'package:placement_cell/pages/home.dart';
 import 'package:placement_cell/pages/resetpassword.dart';
 import 'package:placement_cell/services/auth.dart';
@@ -44,8 +47,16 @@ class _LoginState extends State<Login> {
                   .then((doc) {
                 var userdata = doc.data();
                 print(userdata);
-                if (userdata!['role'] == 0) {
+                StudentController _controller = Get.find();
+                _controller.setStudent(userdata!);
+                bool isEmailVerified = _auth.currentUser!.emailVerified;
+
+                if (!isEmailVerified) {
+                  FirebaseAuth.instance.currentUser!.sendEmailVerification();
+                  Get.to(EmailVerified());
+                } else if (userdata['role'] == 0) {
                   print(userdata["role"]);
+
                   Get.to(() => Home(
                         clgName: userdata['userFrom'],
                         userName: userdata['userName'],
@@ -53,6 +64,8 @@ class _LoginState extends State<Login> {
                         dob: userdata['dob'],
                         cgpa: userdata['cgpa'],
                         yoc: userdata['yoc'],
+                        resume: userdata['resume'] ?? "NA",
+                        photo: userdata['photo'] ?? "NA",
                       ));
                   _formKey.currentState!.reset();
                 } else if (userdata['role'] == 4) {
@@ -70,7 +83,7 @@ class _LoginState extends State<Login> {
                 } else if (userdata['role'] == 2) {
                   print(userdata['role']);
                   Get.to(
-                    () => CollegeHome(
+                    () => CollegeNavTab(
                       clgName: userdata['userFrom'],
                     ),
                   );

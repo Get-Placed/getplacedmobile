@@ -7,7 +7,7 @@ import 'package:placement_cell/services/database.dart';
 import 'package:placement_cell/services/values.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-class CompanyInfo extends StatefulWidget {
+class AdminCompanyInfo extends StatefulWidget {
   final String designation,
       lpa,
       time,
@@ -19,12 +19,10 @@ class CompanyInfo extends StatefulWidget {
       abt1,
       abt2,
       jobID,
-      userName,
       clgName,
-      joblink,
-      userEmail;
+      joblink;
   final int cgpa, hsc, ssc;
-  const CompanyInfo({
+  const AdminCompanyInfo({
     Key? key,
     required this.designation,
     required this.time,
@@ -38,189 +36,30 @@ class CompanyInfo extends StatefulWidget {
     required this.abt1,
     required this.abt2,
     required this.jobID,
-    required this.userName,
     required this.clgName,
-    required this.userEmail,
     required this.cgpa,
     required this.hsc,
     required this.ssc,
   });
 
   @override
-  _CompanyInfoState createState() => _CompanyInfoState();
+  _AdminCompanyInfoState createState() => _AdminCompanyInfoState();
 }
 
-class _CompanyInfoState extends State<CompanyInfo> {
+class _AdminCompanyInfoState extends State<AdminCompanyInfo> {
   String appliedID = "";
-  var clgData;
   DataService _dataService = DataService();
   StudentController _studentController = Get.find();
-  void applyForJob() {
-    print(_studentController.student);
-    int _ssc = int.tryParse(_studentController.student['ssc']) ?? 0;
-    int _hsc = int.tryParse(_studentController.student['hsc']) ?? 0;
-    int _cgpa = int.tryParse(_studentController.student['cgpa']) ?? 0;
-    String? resume = _studentController.student['resume'];
-    String? photo = _studentController.student['photo'];
-    print(clgData);
-    int salaryRange1 = clgData['salaryRange1'];
-    int salaryRange2 = clgData['salaryRange2'];
-    int salaryRange3 = clgData['salaryRange3'];
-    print(widget.userEmail);
-
-    if (resume == null) {
-      Get.snackbar(
-        "ERROR",
-        "Please Upload Your Resume",
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red,
-        duration: Duration(seconds: 2),
-        margin: EdgeInsets.all(10),
-        colorText: Colors.white,
-      );
-      return;
-    }
-    if (photo == null) {
-      Get.snackbar(
-        "ERROR",
-        "Please Upload Your Photo!",
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red,
-        duration: Duration(seconds: 2),
-        margin: EdgeInsets.all(10),
-        colorText: Colors.white,
-      );
-      return;
-    }
-    print("ssc: $_ssc");
-    print("hsc: $_hsc");
-    print("cgpa: $_cgpa");
-
-    if (_ssc > widget.ssc && _hsc > widget.hsc && _cgpa > widget.cgpa) {
-      FirebaseFirestore.instance
-          .collection('Applied Jobs')
-          .where(
-            'userEmail',
-            isEqualTo: widget.userEmail,
-          )
-          .where('status', isEqualTo: "ACCEPTED")
-          .get()
-          .then((value) {
-        print(value.docs);
-        if (value.docs.length == 0) {
-          setState(() {
-            appliedID = widget.jobID + widget.userEmail;
-          });
-          Map<String, dynamic> appliedJobData = {
-            "appliedName": widget.userName,
-            "clgName": widget.clgName,
-            "designation": widget.designation,
-            "logoUrl": widget.logo,
-            "compName": widget.compName,
-            "owner": widget.owner,
-            "userEmail": widget.userEmail,
-            "jobid": widget.jobID,
-            "acceptedBy": "clg ${widget.compName}",
-            "status": "APPLIED"
-          };
-          _dataService.appliedJobs(appliedJobData, appliedID).then((value) {
-            Get.snackbar(widget.compName,
-                "Job has been applied for ${widget.designation}");
-            loadData();
-          });
-          Get.to(WebView(
-            initialUrl: widget.joblink,
-          ));
-        }
-        value.docs.forEach((doc) {
-          print(doc);
-          FirebaseFirestore.instance
-              .collection('Jobs')
-              .doc(doc["jobid"])
-              .get()
-              .then((value) {
-            var salaryData = value.data()!['aSalary'];
-            print("Salary Data ${salaryData}");
-            int lpa = int.tryParse(salaryData) ?? 0;
-            // Dont apply for job if salaryData and lpa both in range of salaryRange1 and salaryRange2
-            print("Previous LPA: $lpa");
-            print("Current LPA: ${widget.lpa}");
-            if ((lpa >= salaryRange1 && lpa <= salaryRange2) &&
-                (int.parse(widget.lpa) >= salaryRange1 &&
-                    int.parse(widget.lpa) <= salaryRange2)) {
-              Get.snackbar(
-                "ERROR",
-                "Your Last Placed Salary is in range of current job , Please apply for another job",
-                snackPosition: SnackPosition.TOP,
-                backgroundColor: Colors.red,
-                duration: Duration(seconds: 2),
-                margin: EdgeInsets.all(10),
-                colorText: Colors.white,
-              );
-            } else if ((lpa >= salaryRange2 && lpa <= salaryRange3) &&
-                (int.parse(widget.lpa) >= salaryRange2 &&
-                    int.parse(widget.lpa) <= salaryRange3)) {
-              Get.snackbar(
-                "ERROR",
-                "Your Last Placed Salary is in range of current job , Please apply for another job",
-                snackPosition: SnackPosition.TOP,
-                backgroundColor: Colors.red,
-                duration: Duration(seconds: 2),
-                margin: EdgeInsets.all(10),
-                colorText: Colors.white,
-              );
-            } else if (lpa > int.parse(widget.lpa)) {
-              Get.snackbar("ERROR",
-                  "You cannot apply for this job as you already have a job with more LPA",
-                  colorText: Colors.white, backgroundColor: Colors.red);
-
-              return;
-            } else {
-              setState(() {
-                appliedID = widget.jobID + widget.userEmail;
-              });
-              Map<String, dynamic> appliedJobData = {
-                "appliedName": widget.userName,
-                "clgName": widget.clgName,
-                "designation": widget.designation,
-                "logoUrl": widget.logo,
-                "compName": widget.compName,
-                "owner": widget.owner,
-                "userEmail": widget.userEmail,
-                "jobid": widget.jobID,
-                "acceptedBy": "clg ${widget.compName}",
-                "status": "APPLIED"
-              };
-              _dataService.appliedJobs(appliedJobData, appliedID).then((value) {
-                Get.snackbar(widget.compName,
-                    "Job has been applied for ${widget.designation}");
-                loadData();
-              });
-              Get.to(WebView(
-                initialUrl: widget.joblink,
-              ));
-            }
-          });
-        });
-      });
-    } else {
-      Get.snackbar("ERROR", "You don't match the eligibility Criteria!");
-    }
-  }
 
   @override
   void initState() {
     super.initState();
     loadData();
-    getCollegeData();
   }
 
   bool dataAvailable = true;
 
   loadData() async {
-    setState(() {
-      appliedID = widget.jobID + widget.userEmail;
-    });
     await FirebaseFirestore.instance
         .collection("Applied Jobs")
         .doc(appliedID)
@@ -232,23 +71,6 @@ class _CompanyInfoState extends State<CompanyInfo> {
           dataAvailable = !dataAvailable;
         });
       }
-    });
-  }
-
-  getCollegeData() async {
-    await FirebaseFirestore.instance
-        .collection("Colleges")
-        .where('clgName', isEqualTo: widget.clgName)
-        .get()
-        .then((doc) {
-      if (doc.docs.length == 0) {
-        Get.snackbar("ERROR", "No Data Found");
-      }
-      doc.docs.forEach((doc) {
-        setState(() {
-          clgData = doc.data();
-        });
-      });
     });
   }
 
@@ -316,38 +138,11 @@ class _CompanyInfoState extends State<CompanyInfo> {
                   sizedH1,
                   detailCard(
                     size: size,
-                    header: "Eligitibitly Criteria",
-                    info1: "HSC ${widget.hsc} , SSC ${widget.ssc}",
-                    info2: "CGPA ${widget.cgpa}",
-                  ),
-                  sizedH1,
-                  detailCard(
-                    size: size,
                     header: "About the Job",
                     info1: widget.abt1,
                     info2: widget.abt2,
                   ),
                   sizedH1,
-                  ElevatedButton.icon(
-                    onPressed: dataAvailable ? applyForJob : null,
-                    icon: Icon(
-                      Icons.analytics,
-                      size: 30.0,
-                    ),
-                    label: Text(
-                      dataAvailable ? "Apply" : "Applied",
-                      style: TextStyle(
-                        fontSize: 24.0,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 15.0,
-                        horizontal: 30.0,
-                      ),
-                      primary: Colors.black,
-                    ),
-                  ),
                   sizedH1,
                 ],
               ),

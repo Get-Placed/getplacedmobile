@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:placement_cell/first/firsttab.dart';
@@ -41,9 +42,12 @@ class _SignupState extends State<Signup> {
       sem7 = "",
       sem8 = "",
       yoc = "",
+      sscyoc = "",
+      hscyoc = "",
       cgpa = "",
+      dipcgpa = "",
       dob = "";
-  var userClg;
+  var userClg, dept;
   int userRole = 0;
 
   AuthService _authService = AuthService();
@@ -52,6 +56,17 @@ class _SignupState extends State<Signup> {
     try {
       if (_formKey.currentState!.validate()) {
         _formKey.currentState!.save();
+        if (int.tryParse(ssc)! > 100 ||
+            int.tryParse(hsc)! > 100 ||
+            int.tryParse(cgpa)! > 10) {
+          Get.snackbar("Error", "Invalid CGPA / SSC / HSC MARKS",
+              snackPosition: SnackPosition.TOP,
+              backgroundColor: Colors.red,
+              colorText: Colors.white,
+              borderRadius: 10,
+              margin: EdgeInsets.all(10),
+              duration: Duration(seconds: 2));
+        }
         await _authService
             .signUpEmailPass(
           email.trim(),
@@ -62,6 +77,7 @@ class _SignupState extends State<Signup> {
         )
             .then(
           (value) async {
+            await FirebaseAuth.instance.currentUser?.sendEmailVerification();
             print(value);
             await FirebaseFirestore.instance
                 .collection("Users")
@@ -70,16 +86,20 @@ class _SignupState extends State<Signup> {
               "ssc": ssc,
               "hsc": hsc,
               "yoc": yoc,
+              "sscyoc": sscyoc,
+              "hscyoc": hscyoc,
               "dob": dob,
               "cgpa": cgpa,
-              "sem1": sem1,
-              "sem2": sem2,
+              "dipcgpa": dipcgpa,
+              "sem1": sem1.isEmpty ? "N/A" : sem1,
+              "sem2": sem2.isEmpty ? "N/A" : sem2,
               "sem3": sem3,
               "sem4": sem4,
               "sem5": sem5.isEmpty ? "N/A" : sem5,
               "sem6": sem6.isEmpty ? "N/A" : sem6,
               "sem7": sem7.isEmpty ? "N/A" : sem7,
               "sem8": sem8.isEmpty ? "N/A" : sem8,
+              "dept": dept,
             });
 
             Get.off(
@@ -229,9 +249,28 @@ class _SignupState extends State<Signup> {
                                   },
                                 ),
                               ),
-                              SizedBox(
-                                width: 20.0,
+                              Expanded(
+                                child: buildFormTile(
+                                  align: TextAlign.center,
+                                  size: size,
+                                  label: "SSC YOC",
+                                  icon: Icons.grading_outlined,
+                                  onChange: (value) {
+                                    sscyoc = value;
+                                  },
+                                  val: (val) {
+                                    return val!.isEmpty
+                                        ? "Enter the SSC YOC"
+                                        : null;
+                                  },
+                                ),
                               ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
                               Expanded(
                                 child: buildFormTile(
                                   align: TextAlign.center,
@@ -240,6 +279,22 @@ class _SignupState extends State<Signup> {
                                   icon: Icons.grading_outlined,
                                   onChange: (value) {
                                     hsc = value;
+                                  },
+                                  val: (val) {
+                                    return val!.isEmpty
+                                        ? "Enter the HSC Marks"
+                                        : null;
+                                  },
+                                ),
+                              ),
+                              Expanded(
+                                child: buildFormTile(
+                                  align: TextAlign.center,
+                                  size: size,
+                                  label: "HSC YOC",
+                                  icon: Icons.grading_outlined,
+                                  onChange: (value) {
+                                    hscyoc = value;
                                   },
                                   val: (val) {
                                     return val!.isEmpty
@@ -320,14 +375,43 @@ class _SignupState extends State<Signup> {
                               ),
                             ),
                           ),
-                          userClg == null
-                              ? Text(
-                                  "Note : If your college is not mentioned contact us",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                  ),
-                                )
-                              : Container(),
+                          sizedH1,
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: DropdownButtonFormField(
+                              validator: (value) => value == null
+                                  ? 'Please select the College'
+                                  : null,
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              value: dept,
+                              isExpanded: true,
+                              onChanged: (value) {
+                                setState(() {
+                                  dept = value;
+                                });
+                              },
+                              hint: Text('Choose Your Department'),
+                              items: [
+                                "Computer Science",
+                                "Information Technology",
+                                "Electronics and Communication",
+                                "Electrical Engineering",
+                                "Mechanical Engineering",
+                                "Civil Engineering",
+                                "Chemical Engineering",
+                                "Biotechnology",
+                              ].map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            ),
+                          ),
                           sizedH1,
                           Row(
                             children: <Widget>[
@@ -477,7 +561,6 @@ class _SignupState extends State<Signup> {
                               ),
                               Expanded(
                                 child: buildFormTile(
-                                  readOnly: true,
                                   align: TextAlign.center,
                                   size: size,
                                   label: "CGPA",
@@ -490,6 +573,15 @@ class _SignupState extends State<Signup> {
                             ],
                           ),
                           sizedH1,
+                          buildFormTile(
+                            align: TextAlign.center,
+                            size: size,
+                            label: "Diploma CGPA",
+                            icon: Icons.star_border,
+                            onChange: (value) {
+                              dipcgpa = value;
+                            },
+                          ),
                         ],
                       ),
                     ),
@@ -548,15 +640,15 @@ class _SignupState extends State<Signup> {
             Icon(
               icon,
               color: k_btnColor,
-              size: 23.0,
+              size: 25.0,
             ),
             SizedBox(
-              width: size.width * 0.01,
+              width: size.width * 0.03,
             ),
             Text(
               label,
               style: TextStyle(
-                fontSize: 17.0,
+                fontSize: 20.0,
                 color: k_btnColor,
               ),
             ),

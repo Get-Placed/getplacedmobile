@@ -7,22 +7,19 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:placement_cell/services/values.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class StudentInfoComp extends StatefulWidget {
-  final String userEmail, jobid, appliedID, compName;
+class StudentPage extends StatefulWidget {
+  final String userEmail;
 
-  const StudentInfoComp({
+  const StudentPage({
     Key? key,
     required this.userEmail,
-    required this.jobid,
-    required this.appliedID,
-    required this.compName,
   });
 
   @override
-  _StudentInfoCompState createState() => _StudentInfoCompState();
+  _StudentPageState createState() => _StudentPageState();
 }
 
-class _StudentInfoCompState extends State<StudentInfoComp> {
+class _StudentPageState extends State<StudentPage> {
   String logo = "loading....",
       name = "loading....",
       clgName = "loading....",
@@ -35,9 +32,10 @@ class _StudentInfoCompState extends State<StudentInfoComp> {
       sem5 = "loading....",
       sem6 = "loading....",
       sem7 = "loading....",
-      photo = "https://ui-avatars.com/api/?name=GETPLACED",
+      photo = "",
       resume = "",
       sem8 = "loading....";
+
   loadUserData() async {
     await FirebaseFirestore.instance
         .collection("Users")
@@ -59,8 +57,8 @@ class _StudentInfoCompState extends State<StudentInfoComp> {
         sem6 = fields?["sem6"];
         sem7 = fields?["sem7"];
         sem8 = fields?["sem8"];
-        photo = fields?["photo"];
-        resume = fields?["resume"];
+        photo = fields?["photo"] ?? "";
+        resume = fields?["resume"] ?? "";
       });
     });
   }
@@ -104,7 +102,9 @@ class _StudentInfoCompState extends State<StudentInfoComp> {
                   child: CircleAvatar(
                     backgroundColor: Colors.white,
                     radius: 80.0,
-                    backgroundImage: NetworkImage(photo),
+                    backgroundImage: NetworkImage(photo == ""
+                        ? "https://ui-avatars.com/api/?name=$name"
+                        : photo),
                   ),
                 ),
               ),
@@ -203,6 +203,13 @@ class _StudentInfoCompState extends State<StudentInfoComp> {
               SizedBox(
                 height: size.height * 0.05,
               ),
+              Row(
+                children: <Widget>[
+                  SizedBox(
+                    width: size.width * 0.03,
+                  ),
+                ],
+              ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
@@ -235,88 +242,6 @@ class _StudentInfoCompState extends State<StudentInfoComp> {
                     ),
                   ),
                 ),
-              ),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () async {
-                        await FirebaseFirestore.instance
-                            .collection("Applied Jobs")
-                            .doc(widget.appliedID)
-                            .update(
-                          {
-                            "acceptedBy": "Done",
-                            "status": 1,
-                          },
-                        ).then((value) {
-                          Navigator.pop(context);
-                        });
-                      },
-                      icon: Icon(
-                        Icons.check_circle_outline,
-                      ),
-                      label: Text(
-                        "Accept",
-                        style: TextStyle(
-                          fontSize: 18.0,
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(
-                          vertical: 15.0,
-                        ),
-                        primary: k_btnColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: size.width * 0.03,
-                  ),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () async {
-                        await FirebaseFirestore.instance
-                            .collection("Applied Jobs")
-                            .doc(widget.appliedID)
-                            .update(
-                          {
-                            "acceptedBy": "Done",
-                            "status": 2,
-                          },
-                        ).then((value) {
-                          Navigator.pop(context);
-                        });
-                      },
-                      icon: Icon(
-                        Icons.close_rounded,
-                        color: k_btnColor,
-                      ),
-                      label: Text(
-                        "Reject",
-                        style: TextStyle(
-                          color: k_btnColor,
-                          fontSize: 18.0,
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        primary: k_themeColor,
-                        padding: EdgeInsets.symmetric(
-                          vertical: 15.0,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                          side: BorderSide(
-                            color: k_btnColor,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
               ),
             ],
           ),

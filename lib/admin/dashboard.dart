@@ -1,14 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:placement_cell/admin/adminPages/AdminJobList.dart';
 import 'package:placement_cell/admin/adminPages/createClgAcc.dart';
 import 'package:placement_cell/admin/adminPages/createCompAcc.dart';
 import 'package:placement_cell/admin/adminPages/stdList.dart';
 import 'package:placement_cell/components/adminDrawer.dart';
+import 'package:placement_cell/pages/regCompanies.dart';
 import 'package:placement_cell/services/auth.dart';
 
 import 'package:placement_cell/services/values.dart';
@@ -24,12 +27,16 @@ class _DashboardState extends State<Dashboard> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int stdReg = 00;
   int jobReg = 00;
+  int compReg = 00;
+  int clgReg = 00;
   NumberFormat formatter = new NumberFormat("00");
   @override
   void initState() {
     super.initState();
     loadStdsCount();
     loadJobsCount();
+    loadCompanyCount();
+    loadCollegeCount();
   }
 
   AuthService _authService = AuthService();
@@ -54,6 +61,26 @@ class _DashboardState extends State<Dashboard> {
       (value) {
         setState(() {
           jobReg = value.docs.length;
+        });
+      },
+    );
+  }
+
+  loadCompanyCount() async {
+    await FirebaseFirestore.instance.collection("Company").get().then(
+      (value) {
+        setState(() {
+          compReg = value.docs.length;
+        });
+      },
+    );
+  }
+
+  loadCollegeCount() async {
+    await FirebaseFirestore.instance.collection("Colleges").get().then(
+      (value) {
+        setState(() {
+          clgReg = value.docs.length;
         });
       },
     );
@@ -151,30 +178,71 @@ class _DashboardState extends State<Dashboard> {
           ],
         ),
         body: Center(
-          child: Column(
-            children: <Widget>[
-              sizedH1,
-              InkWell(
-                onTap: () {
-                  Get.to(
-                    () => StudentList(),
-                  );
-                },
-                child: adminCard(
-                  size,
-                  label: "Students Registered",
-                  count: "${formatter.format(stdReg)}",
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: 20),
+            child: ListView(
+              children: <Widget>[
+                sizedH1,
+                InkWell(
+                  onTap: () {
+                    Get.to(
+                      () => StudentList(),
+                    );
+                  },
+                  child: adminCard(
+                    size,
+                    label: "Students Registered",
+                    count: "${formatter.format(stdReg)}",
+                  ),
                 ),
-              ),
-              SizedBox(
-                height: size.height * 0.05,
-              ),
-              adminCard(
-                size,
-                label: "Active Jobs",
-                count: "${formatter.format(jobReg)}",
-              ),
-            ],
+                SizedBox(
+                  height: size.height * 0.05,
+                ),
+                InkWell(
+                  onTap: () {
+                    Get.to(
+                      () => AdminJobList(),
+                    );
+                  },
+                  child: adminCard(
+                    size,
+                    label: "Active Jobs",
+                    count: "${formatter.format(jobReg)}",
+                  ),
+                ),
+                SizedBox(
+                  height: size.height * 0.05,
+                ),
+                InkWell(
+                  onTap: () {
+                    // Get.to(
+                    //   () => AdminJobList(),
+                    // );
+                    Get.to(() => RegisteredCompanies());
+                  },
+                  child: adminCard(
+                    size,
+                    label: "Active Companies",
+                    count: "${formatter.format(compReg)}",
+                  ),
+                ),
+                SizedBox(
+                  height: size.height * 0.05,
+                ),
+                InkWell(
+                  onTap: () {
+                    // Get.to(
+                    //   () => AdminJobList(),
+                    // );
+                  },
+                  child: adminCard(
+                    size,
+                    label: "Active Colleges",
+                    count: "${formatter.format(clgReg)}",
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         floatingActionButton: _getFab(size),

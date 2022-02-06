@@ -20,9 +20,10 @@ class _CompInfoTrackState extends State<CompInfoTrack> {
   AuthService _authService = AuthService();
   late Query appliedData;
   loadAppliedData() {
+    print(widget.compName);
     appliedData = FirebaseFirestore.instance
         .collection("Applied Jobs")
-        .where("acceptedBy", isEqualTo: "Done");
+        .where("compName", isEqualTo: widget.compName);
   }
 
   @override
@@ -87,15 +88,6 @@ class _CompInfoTrackState extends State<CompInfoTrack> {
           elevation: 0.0,
           systemOverlayStyle: SystemUiOverlayStyle.light,
           backgroundColor: Colors.transparent,
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.black,
-            ),
-            onPressed: () {
-              Navigator.maybePop(context);
-            },
-          ),
           actions: [
             IconButton(
               onPressed: () {
@@ -140,23 +132,14 @@ class _CompInfoTrackState extends State<CompInfoTrack> {
                                 snapshot.data.docs[index].data()["appliedName"],
                               );
                               return buildStatusTile(
-                                name: snapshot.data.docs[index]
-                                    .data()["appliedName"],
-                                designation: snapshot.data.docs[index]
-                                    .data()["designation"],
-                                clgName:
-                                    snapshot.data.docs[index].data()["clgName"],
-                                status: snapshot.data.docs[index]
-                                            .data()["status"] ==
-                                        1
-                                    ? "Accepted"
-                                    : "Rejected",
-                                statusColor: snapshot.data.docs[index]
-                                            .data()["status"] ==
-                                        1
-                                    ? Colors.green
-                                    : Colors.red,
-                              );
+                                  name: snapshot.data.docs[index]
+                                      .data()["appliedName"],
+                                  designation: snapshot.data.docs[index]
+                                      .data()["designation"],
+                                  clgName: snapshot.data.docs[index]
+                                      .data()["clgName"],
+                                  status: snapshot.data.docs[index]
+                                      .data()["status"]);
                             },
                           );
                   },
@@ -174,7 +157,6 @@ class _CompInfoTrackState extends State<CompInfoTrack> {
     required String designation,
     required String clgName,
     required String status,
-    Color? statusColor,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -203,7 +185,6 @@ class _CompInfoTrackState extends State<CompInfoTrack> {
           trailing: Text(
             status,
             style: TextStyle(
-              color: statusColor,
               fontWeight: FontWeight.bold,
             ),
           ),

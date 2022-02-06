@@ -39,13 +39,24 @@ class _CreateJobState extends State<CreateJob> {
       qual1 = "",
       qual2 = "",
       abtJob1 = "",
-      abtJob2 = "";
+      abtJob2 = "",
+      ssc = "",
+      hsc = "",
+      joblink = "",
+      cgpa = "";
   var selClgVal;
   String _timeValue = "Full Time";
 
   createJob() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+      if (int.parse(ssc) > 100 ||
+          int.parse(hsc) > 100 ||
+          int.parse(cgpa) > 10) {
+        Get.snackbar("Error", "Invalid CGPA");
+
+        return;
+      }
       Map<String, dynamic> jobData = {
         "selClgVal": selClgVal,
         "designation": designation,
@@ -53,6 +64,10 @@ class _CreateJobState extends State<CreateJob> {
         "aSalary": aSalary,
         "qual1": qual1,
         "qual2": qual2,
+        "ssc": int.parse(ssc),
+        "hsc": int.parse(hsc),
+        "cgpa": int.parse(cgpa),
+        "joblink": joblink,
         "abtJob1": abtJob1,
         "abtJob2": abtJob2,
         "owner": widget.owner,
@@ -153,6 +168,54 @@ class _CreateJobState extends State<CreateJob> {
                   onChange: (value) {
                     designation = value;
                   },
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    "Requirements",
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+                buildFormField(
+                  label: "SSC%",
+                  onChange: (value) {
+                    ssc = value;
+                  },
+                ),
+                buildFormField(
+                  label: "HSC%",
+                  onChange: (value) {
+                    hsc = value;
+                  },
+                ),
+                buildFormField(
+                  label: "CGPA",
+                  onChange: (value) {
+                    cgpa = value;
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    "Job Link",
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                buildFormField(
+                  label: "Link",
+                  onChange: (value) {
+                    joblink = value;
+                  },
+                ),
+                Divider(
+                  thickness: 1.0,
                 ),
                 Row(
                   children: <Widget>[

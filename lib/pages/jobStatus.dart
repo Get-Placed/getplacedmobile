@@ -134,23 +134,14 @@ class _JobStatusState extends State<JobStatus> {
                               snapshot.data.docs[index].data()["appliedName"],
                             );
                             return buildStatusTile(
-                              name: snapshot.data.docs[index]
-                                  .data()["appliedName"],
-                              designation: snapshot.data.docs[index]
-                                  .data()["designation"],
-                              compName:
-                                  snapshot.data.docs[index].data()["compName"],
-                              status:
-                                  snapshot.data.docs[index].data()["status"] ==
-                                          1
-                                      ? "Accepted"
-                                      : "Rejected",
-                              statusColor:
-                                  snapshot.data.docs[index].data()["status"] ==
-                                          1
-                                      ? Colors.green
-                                      : Colors.red,
-                            );
+                                name: snapshot.data.docs[index]
+                                    .data()["appliedName"],
+                                designation: snapshot.data.docs[index]
+                                    .data()["designation"],
+                                compName: snapshot.data.docs[index]
+                                    .data()["compName"],
+                                status:
+                                    snapshot.data.docs[index].data()["status"]);
                           },
                         );
                 },

@@ -10,7 +10,7 @@ import 'package:placement_cell/services/values.dart';
 
 class Home extends StatefulWidget {
   final String clgName;
-  final String userName, userEmail, dob, cgpa, yoc;
+  final String userName, userEmail, dob, cgpa, yoc, resume, photo;
   const Home({
     Key? key,
     required this.clgName,
@@ -19,6 +19,8 @@ class Home extends StatefulWidget {
     required this.cgpa,
     required this.dob,
     required this.yoc,
+    required this.resume,
+    required this.photo,
   });
 
   @override
@@ -27,6 +29,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   var jobData;
+  var salaryData;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -40,6 +43,7 @@ class _HomeState extends State<Home> {
         .collection("Jobs")
         .where("selClgVal", isEqualTo: widget.clgName)
         .snapshots();
+    print(jobData);
   }
 
   AuthService _authService = AuthService();
@@ -104,6 +108,8 @@ class _HomeState extends State<Home> {
           dob: widget.dob,
           cgpa: widget.cgpa,
           yoc: widget.yoc,
+          resume: widget.resume,
+          photo: widget.photo,
         ),
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -170,7 +176,9 @@ class _HomeState extends State<Home> {
                                         time: snapshot.data.docs[index]
                                             .data()["_timeValue"],
                                         lpa: snapshot.data.docs[index]
-                                            .data()["aSalary"],
+                                            .data()["aSalary"]
+                                            .toString(),
+                                        userEmail: widget.userEmail,
                                         logo: snapshot.data.docs[index]
                                             .data()["logoUrl"],
                                         owner: snapshot.data.docs[index]
@@ -185,10 +193,17 @@ class _HomeState extends State<Home> {
                                             .data()["abtJob1"],
                                         abt2: snapshot.data.docs[index]
                                             .data()["abtJob2"],
+                                        joblink: snapshot.data.docs[index]
+                                            .data()["joblink"],
+                                        cgpa: snapshot.data.docs[index]
+                                            .data()["cgpa"],
+                                        hsc: snapshot.data.docs[index]
+                                            .data()["hsc"],
+                                        ssc: snapshot.data.docs[index]
+                                            .data()["ssc"],
                                         jobID: snapshot.data.docs[index].id,
                                         userName: widget.userName,
                                         clgName: widget.clgName,
-                                        userEmail: widget.userEmail,
                                       ),
                                     ),
                                   );
@@ -207,7 +222,8 @@ class _HomeState extends State<Home> {
                                   jobName: snapshot.data.docs[index]
                                       .data()["designation"],
                                   lpa: snapshot.data.docs[index]
-                                      .data()["aSalary"],
+                                      .data()["aSalary"]
+                                      .toString(),
                                   time: snapshot.data.docs[index]
                                       .data()["_timeValue"],
                                   logo: snapshot.data.docs[index]

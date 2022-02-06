@@ -1,26 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:placement_cell/admin/CompAnalytics.dart';
+import 'package:placement_cell/admin/collegeAdmin/AllJobsCollege.dart';
+import 'package:placement_cell/admin/collegeAdmin/AllStudents.dart';
+import 'package:placement_cell/admin/collegeAdmin/AllStudentsApplied.dart';
+import 'package:placement_cell/admin/collegeAdmin/CollegeAnalystics.dart';
 import 'package:placement_cell/admin/compAdmin/TrackJobs.dart';
 import 'package:placement_cell/admin/compAdmin/compHome.dart';
 import 'package:placement_cell/admin/compAdmin/compTrackInfo.dart';
-import 'package:placement_cell/admin/compAdmin/createJob.dart';
 import 'package:placement_cell/services/values.dart';
 
-class CompNavTab extends StatefulWidget {
-  final String logoUrl, owner, compName;
-  const CompNavTab({
+class CollegeNavTab extends StatefulWidget {
+  final String clgName;
+
+  const CollegeNavTab({
     Key? key,
-    required this.owner,
-    required this.compName,
-    required this.logoUrl,
+    required this.clgName,
   });
 
   @override
-  _CompNavTabState createState() => _CompNavTabState();
+  _CollegeNavTabState createState() => _CollegeNavTabState();
 }
 
-class _CompNavTabState extends State<CompNavTab> {
+class _CollegeNavTabState extends State<CollegeNavTab> {
   int _selectedIndex = 0;
 
   void onTapped(int index) {
@@ -32,36 +33,15 @@ class _CompNavTabState extends State<CompNavTab> {
   @override
   Widget build(BuildContext context) {
     List<Widget> _widgets = [
-      TrackJobs(
-          owner: widget.owner,
-          logoUrl: widget.logoUrl,
-          compName: widget.compName),
-      CompAnalytics(
-          owner: widget.owner,
-          logoUrl: widget.logoUrl,
-          compName: widget.compName),
-      CompInfoTrack(
-        compName: widget.compName,
+      AllStudents(
+        clgName: widget.clgName,
       ),
+      AllStudentsApplied(clgName: widget.clgName),
+      AllJobsCollege(clgName: widget.clgName),
+      CollegeAnalytics(collegeName: widget.clgName),
     ];
     return Scaffold(
       body: _widgets.elementAt(_selectedIndex),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Get.to(
-            () => CreateJob(
-              owner: widget.owner,
-              logoUrl: widget.logoUrl,
-              compName: widget.compName,
-            ),
-          );
-        },
-        tooltip: "Create Job",
-        backgroundColor: Colors.black,
-        child: Icon(
-          Icons.add,
-        ),
-      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: onTapped,
@@ -71,15 +51,19 @@ class _CompNavTabState extends State<CompNavTab> {
         unselectedItemColor: Colors.grey,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
+            icon: Icon(Icons.people),
+            label: "",
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.list),
             label: "",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.analytics),
+            icon: Icon(Icons.stacked_line_chart_outlined),
             label: "",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.stacked_line_chart_outlined),
+            icon: Icon(Icons.assessment),
             label: "",
           ),
         ],

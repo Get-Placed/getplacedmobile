@@ -16,7 +16,7 @@ class _CreateCollegeState extends State<CreateCollege> {
   DataService _dataService = DataService();
 
   String clgId = "", clgName = "", clgAddr = "";
-
+  String salaryRange1 = "", salaryRange2 = "", salaryRange3 = "";
   createClg() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
@@ -25,6 +25,9 @@ class _CreateCollegeState extends State<CreateCollege> {
       Map<String, dynamic> clgData = {
         "clgName": clgName,
         "clgAddr": clgAddr,
+        "salaryRange1": salaryRange1 == "" ? 0 : int.parse(salaryRange1),
+        "salaryRange2": salaryRange2 == "" ? 0 : int.parse(salaryRange2),
+        "salaryRange3": salaryRange3 == "" ? 0 : int.parse(salaryRange3),
       };
       _dataService.addColleges(clgData, clgId).then((value) {
         Get.snackbar(clgName, "Added to Database");
@@ -42,9 +45,7 @@ class _CreateCollegeState extends State<CreateCollege> {
       child: Scaffold(
         body: Form(
           key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: ListView(
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(
@@ -129,6 +130,87 @@ class _CreateCollegeState extends State<CreateCollege> {
                   ),
                   onChanged: (val) {
                     clgAddr = val;
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: TextFormField(
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: "Salary Range Minimum",
+                    labelStyle: TextStyle(
+                      color: Colors.black87,
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.black,
+                        width: 3.0,
+                      ),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.black,
+                        width: 5.0,
+                      ),
+                    ),
+                  ),
+                  onChanged: (val) {
+                    salaryRange1 = val;
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: TextFormField(
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: "Salary Range Medium",
+                    labelStyle: TextStyle(
+                      color: Colors.black87,
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.black,
+                        width: 3.0,
+                      ),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.black,
+                        width: 5.0,
+                      ),
+                    ),
+                  ),
+                  onChanged: (val) {
+                    salaryRange2 = val;
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: TextFormField(
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: "Salary Range Maximum",
+                    labelStyle: TextStyle(
+                      color: Colors.black87,
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.black,
+                        width: 3.0,
+                      ),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.black,
+                        width: 5.0,
+                      ),
+                    ),
+                  ),
+                  onChanged: (val) {
+                    salaryRange3 = val;
                   },
                 ),
               ),

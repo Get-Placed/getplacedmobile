@@ -10,24 +10,24 @@ import 'package:placement_cell/admin/collegeAdmin/stdJobInfo.dart';
 import 'package:placement_cell/services/auth.dart';
 import 'package:placement_cell/services/values.dart';
 
-class CollegeHome extends StatefulWidget {
+class AllJobsCollege extends StatefulWidget {
   final String clgName;
-  const CollegeHome({
+  const AllJobsCollege({
     Key? key,
     required this.clgName,
   });
 
   @override
-  _CollegeHomeState createState() => _CollegeHomeState();
+  _AllJobsCollegeState createState() => _AllJobsCollegeState();
 }
 
-class _CollegeHomeState extends State<CollegeHome> {
+class _AllJobsCollegeState extends State<AllJobsCollege> {
   late Query appliedJob;
   AuthService _authService = AuthService();
   loadData() {
     appliedJob = FirebaseFirestore.instance
-        .collection("Applied Jobs")
-        .where("acceptedBy", isEqualTo: "user ${widget.clgName}");
+        .collection("Jobs")
+        .where("selClgVal", isEqualTo: "${widget.clgName}");
   }
 
   @override
@@ -90,17 +90,19 @@ class _CollegeHomeState extends State<CollegeHome> {
       child: Scaffold(
         backgroundColor: k_themeColor,
         appBar: AppBar(
-          systemOverlayStyle: SystemUiOverlayStyle.dark,
-          backgroundColor: Colors.transparent,
-          elevation: 0.0,
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.black,
+          automaticallyImplyLeading: false,
+          title: Text(
+            "Jobs In ${widget.clgName}",
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Color(0xff4338CA),
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xff000000), Color(0xff7f8c8d)],
+                stops: [0.5, 1.0],
+              ),
             ),
-            onPressed: () {
-              Navigator.maybePop(context);
-            },
           ),
           actions: [
             IconButton(
@@ -109,20 +111,13 @@ class _CollegeHomeState extends State<CollegeHome> {
               },
               icon: Icon(
                 Icons.power_settings_new_outlined,
-                color: Colors.red,
+                color: Colors.white,
               ),
             ),
           ],
         ),
         body: Column(
           children: <Widget>[
-            Text(
-              "Applied Jobs List",
-              style: GoogleFonts.aBeeZee(
-                fontSize: 24.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
             SizedBox(
               height: size.height * 0.04,
             ),
@@ -141,23 +136,8 @@ class _CollegeHomeState extends State<CollegeHome> {
                             itemCount: snapshot.data.docs.length,
                             itemBuilder: (BuildContext context, int index) {
                               return InkWell(
-                                onTap: () {
-                                  Get.to(
-                                    () => StudentJobInfo(
-                                      userEmail: snapshot.data.docs[index]
-                                          .data()["userEmail"],
-                                      jobid: snapshot.data.docs[index]
-                                          .data()["jobid"],
-                                      appliedID: snapshot.data.docs[index].id,
-                                      compName: snapshot.data.docs[index]
-                                          .data()["compName"],
-                                    ),
-                                  );
-                                },
                                 child: buildApplyJob(
                                   size,
-                                  appliedName: snapshot.data.docs[index]
-                                      .data()["appliedName"],
                                   designation: snapshot.data.docs[index]
                                       .data()["designation"],
                                   compName: snapshot.data.docs[index]
@@ -166,7 +146,6 @@ class _CollegeHomeState extends State<CollegeHome> {
                                       snapshot.data.docs[index].data()["owner"],
                                   logo: snapshot.data.docs[index]
                                       .data()["logoUrl"],
-                                  appliedID: snapshot.data.docs[index].id,
                                 ),
                               );
                             },
@@ -177,29 +156,16 @@ class _CollegeHomeState extends State<CollegeHome> {
             ),
           ],
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Get.to(() => CreateNotices(
-                  clgName: widget.clgName,
-                ));
-          },
-          backgroundColor: k_btnColor,
-          child: Icon(
-            Icons.add,
-          ),
-        ),
       ),
     );
   }
 
   Widget buildApplyJob(
     Size size, {
-    required String appliedName,
     required String designation,
     String logo = "",
     required String compName,
     required String compOwner,
-    required String appliedID,
   }) {
     return Padding(
       padding: const EdgeInsets.only(
@@ -224,18 +190,11 @@ class _CollegeHomeState extends State<CollegeHome> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(
-                appliedName,
-                style: GoogleFonts.ubuntu(
-                  fontSize: 30.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
               SizedBox(
                 height: size.height * 0.01,
               ),
               Text(
-                "Applied For",
+                "Job Role",
                 style: GoogleFonts.poppins(),
               ),
               SizedBox(

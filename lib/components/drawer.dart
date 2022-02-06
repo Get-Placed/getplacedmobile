@@ -8,7 +8,7 @@ import 'package:placement_cell/services/auth.dart';
 import 'package:placement_cell/services/values.dart';
 
 class MyDrawer extends StatefulWidget {
-  final String userName, userEmail, clgName, dob, cgpa, yoc;
+  final String userName, userEmail, clgName, dob, cgpa, yoc, resume, photo;
   const MyDrawer({
     Key? key,
     required this.userName,
@@ -17,6 +17,8 @@ class MyDrawer extends StatefulWidget {
     required this.dob,
     required this.cgpa,
     required this.yoc,
+    required this.resume,
+    required this.photo,
   });
 
   @override
@@ -66,6 +68,8 @@ class _MyDrawerState extends State<MyDrawer> {
                     dob: widget.dob,
                     cgpa: widget.cgpa,
                     yoc: widget.yoc,
+                    resume: widget.resume,
+                    photo: widget.photo,
                   ),
                 );
               },
