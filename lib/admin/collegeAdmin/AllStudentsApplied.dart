@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +11,8 @@ import 'package:placement_cell/admin/collegeAdmin/createNotices.dart';
 import 'package:placement_cell/admin/collegeAdmin/stdJobInfo.dart';
 import 'package:placement_cell/services/auth.dart';
 import 'package:placement_cell/services/values.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:csv/csv.dart';
 
 class AllStudentsApplied extends StatefulWidget {
   final String clgName;
@@ -22,7 +26,7 @@ class AllStudentsApplied extends StatefulWidget {
 }
 
 class _AllStudentsAppliedState extends State<AllStudentsApplied> {
-  late Query appliedJob;
+  late Query<Map<String, dynamic>> appliedJob;
   AuthService _authService = AuthService();
   loadData() {
     appliedJob = FirebaseFirestore.instance
@@ -34,6 +38,50 @@ class _AllStudentsAppliedState extends State<AllStudentsApplied> {
   void initState() {
     super.initState();
     loadData();
+  }
+
+  Future<void> _exportJobData() async {
+    if (await Permission.storage.request().isDenied) {
+      Get.snackbar(
+        "Storage Permission",
+        "Please first grant storage permission to download the data",
+        backgroundColor: Colors.red,
+        animationDuration: Duration(seconds: 3),
+      );
+      return;
+    }
+    QuerySnapshot<Map<String, dynamic>> jobData = await appliedJob.get();
+
+    List<List<String>> csvData = [
+      [
+        "Name",
+        "Email ID",
+        "Branch",
+        "Company",
+        "Designation",
+        "Salary Package",
+        "Status",
+      ],
+      ...jobData.docs.map((job) => [
+            job["appliedName"],
+            job["userEmail"],
+            job["branch"],
+            job["compName"],
+            job["designation"],
+            job["salary"],
+            job["status"],
+          ]),
+    ];
+
+    String csv = ListToCsvConverter().convert(csvData);
+    final String path = "storage/emulated/0/Documents/placement_data.csv";
+
+    final File file = File(path);
+
+    await file.writeAsString(csv);
+
+    Get.snackbar("Placement Data", "saved in $path",
+        animationDuration: Duration(seconds: 3));
   }
 
   Future<bool?> _onBackPressed() {
@@ -174,17 +222,15 @@ class _AllStudentsAppliedState extends State<AllStudentsApplied> {
             ),
           ],
         ),
-        floatingActionButton: FloatingActionButton(
+        floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
-            Get.to(() => CreateNotices(
-                  clgName: widget.clgName,
-                ));
+            _exportJobData();
           },
-          backgroundColor: k_btnColor,
-          child: Icon(
-            Icons.add,
-          ),
+          label: const Text("Download Placement Data"),
+          icon: const Icon(Icons.file_download_outlined),
+          backgroundColor: Colors.black,
         ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
     );
   }

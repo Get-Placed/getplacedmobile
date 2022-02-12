@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:placement_cell/first/firsttab.dart';
 import 'package:placement_cell/services/auth.dart';
 import 'package:placement_cell/services/values.dart';
@@ -50,6 +51,8 @@ class _SignupState extends State<Signup> {
   var userClg, dept;
   int userRole = 0;
 
+  TextEditingController dateCtl = TextEditingController();
+
   AuthService _authService = AuthService();
 
   signUP() async {
@@ -84,13 +87,13 @@ class _SignupState extends State<Signup> {
                 .doc(email.trim())
                 .update({
               "ssc": ssc,
-              "hsc": hsc,
+              "hsc": hsc.isEmpty ? "N/A" : hsc,
               "yoc": yoc,
               "sscyoc": sscyoc,
-              "hscyoc": hscyoc,
+              "hscyoc": hscyoc.isEmpty ? "N/A" : hscyoc,
               "dob": dob,
               "cgpa": cgpa,
-              "dipcgpa": dipcgpa,
+              "dipcgpa": dipcgpa.isEmpty ? "N/A" : dipcgpa,
               "sem1": sem1.isEmpty ? "N/A" : sem1,
               "sem2": sem2.isEmpty ? "N/A" : sem2,
               "sem3": sem3,
@@ -205,18 +208,71 @@ class _SignupState extends State<Signup> {
                             },
                           ),
                           sizedH1,
-                          buildFormTile(
-                            size: size,
-                            label: "Date Of Birth",
-                            val: (val) {
-                              return val!.isEmpty
-                                  ? "Enter Date Of Birth"
-                                  : null;
-                            },
-                            icon: Icons.calendar_today,
-                            onChange: (value) {
+                          Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.calendar_today,
+                                color: k_btnColor,
+                              ),
+                              SizedBox(
+                                width: size.width * 0.03,
+                              ),
+                              Text(
+                                "Date Of Birth",
+                                style: TextStyle(
+                                  fontSize: 20.0,
+                                  color: k_btnColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: size.height * 0.01,
+                          ),
+                          TextFormField(
+                            readOnly: true,
+                            controller: dateCtl,
+                            onChanged: (value) {
                               dob = value;
                             },
+                            validator: (value) {
+                              return value!.isEmpty
+                                  ? "Enter Date of Birth"
+                                  : null;
+                            },
+                            keyboardType: TextInputType.none,
+                            onTap: () async {
+                              DateTime? date = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime(2004, 1, 1),
+                                firstDate: DateTime(1997),
+                                lastDate: DateTime(2004, 12),
+                                builder: (context, child) {
+                                  return Theme(
+                                    child: child!,
+                                    data: ThemeData.light().copyWith(
+                                      colorScheme: ColorScheme.light().copyWith(
+                                        primary: Colors.black,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                              if (date != null) {
+                                dateCtl.text =
+                                    DateFormat("dd/MM/yyyy").format(date);
+                              }
+                            },
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.grey[300],
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide.none,
+                                borderRadius: BorderRadius.circular(
+                                  40.0,
+                                ),
+                              ),
+                            ),
                           ),
                           sizedH1,
                           Padding(
@@ -280,11 +336,6 @@ class _SignupState extends State<Signup> {
                                   onChange: (value) {
                                     hsc = value;
                                   },
-                                  val: (val) {
-                                    return val!.isEmpty
-                                        ? "Enter the HSC Marks"
-                                        : null;
-                                  },
                                 ),
                               ),
                               Expanded(
@@ -295,11 +346,6 @@ class _SignupState extends State<Signup> {
                                   icon: Icons.grading_outlined,
                                   onChange: (value) {
                                     hscyoc = value;
-                                  },
-                                  val: (val) {
-                                    return val!.isEmpty
-                                        ? "Enter the HSC Marks"
-                                        : null;
                                   },
                                 ),
                               ),
@@ -640,7 +686,6 @@ class _SignupState extends State<Signup> {
             Icon(
               icon,
               color: k_btnColor,
-              size: 25.0,
             ),
             SizedBox(
               width: size.width * 0.03,
@@ -657,27 +702,23 @@ class _SignupState extends State<Signup> {
         SizedBox(
           height: size.height * 0.01,
         ),
-        Stack(
-          children: <Widget>[
-            TextFormField(
-              readOnly: readOnly,
-              textAlign: align,
-              validator: val,
-              obscureText: obsText,
-              keyboardType: type,
-              onChanged: onChange,
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.grey[300],
-                border: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(
-                    40.0,
-                  ),
-                ),
+        TextFormField(
+          readOnly: readOnly,
+          textAlign: align,
+          validator: val,
+          obscureText: obsText,
+          keyboardType: type,
+          onChanged: onChange,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.grey[300],
+            border: OutlineInputBorder(
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.circular(
+                40.0,
               ),
             ),
-          ],
+          ),
         ),
       ],
     );

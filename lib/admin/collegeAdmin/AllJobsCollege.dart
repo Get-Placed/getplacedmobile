@@ -156,6 +156,16 @@ class _AllJobsCollegeState extends State<AllJobsCollege> {
             ),
           ],
         ),
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () {
+            Get.to(() => CreateNotices(
+                  clgName: widget.clgName,
+                ));
+          },
+          backgroundColor: k_btnColor,
+          label: const Text("Create Notice"),
+          icon: const Icon(Icons.create),
+        ),
       ),
     );
   }
