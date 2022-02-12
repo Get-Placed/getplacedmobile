@@ -13,91 +13,50 @@ class CollegeAnalytics extends StatefulWidget {
 }
 
 class _CollegeAnalyticsState extends State<CollegeAnalytics> {
-  var studentData;
-  var _sscAverage = 0.0;
-  var _hscAverage = 0.0;
-  var _cgpaAverage = 0.0;
-  var totalJobsApplied = 0;
-  var totalJobsSelected = 0;
-  var jobsData;
-  @override
+  late int registeredStudents;
+  late List<QueryDocumentSnapshot<Map<String, dynamic>>> jobsData;
+  late int totalOffers;
+  Map<String, double> companyCount = {};
+  Map<String, double> branchCount = {};
+  bool isLoading = true;
+
   void initState() {
     super.initState();
-    getStudentData();
-    getJobData();
+    getData();
   }
 
-  getJobData() async {
-    await FirebaseFirestore.instance
-        .collection("Applied Jobs")
-        .where("clgName", isEqualTo: widget.collegeName)
-        .get()
-        .then((value) {
-      setState(() {
-        totalJobsApplied = value.docs.length;
-        jobsData = value.docs;
-      });
-    });
-    for (var i = 0; i < jobsData.length; i++) {
-      if (jobsData[i].data()["status"] == "ACCEPTED") {
-        totalJobsSelected++;
-      }
-    }
-  }
-
-  getStudentData() async {
-    await FirebaseFirestore.instance
+  Future<void> getData() async {
+    var studentData = await FirebaseFirestore.instance
         .collection("Users")
         .where("role", isEqualTo: 0)
         .where("userFrom", isEqualTo: widget.collegeName)
-        .get()
-        .then(
-      (value) {
-        setState(() {
-          studentData = value.docs;
-        });
-      },
-    );
-    getsscAverage();
-    getHscAverage();
-    getCgpaAverage();
-  }
+        .get();
+    registeredStudents = studentData.docs.length;
 
-  getsscAverage() {
-    int sum = 0;
-    for (var i = 0; i < studentData.length; i++) {
-      print(studentData[i].data()["email"] + studentData[i].data()["ssc"]);
-      sum += int.tryParse(studentData[i].data()['ssc'])!;
-    }
-    _sscAverage = sum / studentData.length;
-  }
+    var snapshot = await FirebaseFirestore.instance
+        .collection("Applied Jobs")
+        .where("clgName", isEqualTo: widget.collegeName)
+        .where("status", isEqualTo: "ACCEPTED")
+        .get();
+    jobsData = snapshot.docs;
 
-  getHscAverage() {
-    int sum = 0;
-    for (var i = 0; i < studentData.length; i++) {
-      print(studentData[i].data()["email"] + studentData[i].data()["hsc"]);
-      sum += int.tryParse(studentData[i].data()['hsc'])!;
+    for (int i = 0; i < jobsData.length; i++) {
+      String compName = jobsData[i].data()["compName"];
+      String branch = jobsData[i].data()["branch"];
+      companyCount.update(compName, (value) => value + 1, ifAbsent: () => 1);
+      branchCount.update(branch, (value) => value + 1, ifAbsent: () => 1);
     }
-    _hscAverage = sum / studentData.length;
-  }
-
-  getCgpaAverage() {
-    int sum = 0;
-    for (var i = 0; i < studentData.length; i++) {
-      print(studentData[i].data()["email"] + studentData[i].data()["cgpa"]);
-      sum += int.tryParse(studentData[i].data()['cgpa'])!;
-    }
-    _cgpaAverage = sum / studentData.length;
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: const Text("College Analytics"),
         automaticallyImplyLeading: false,
-        title: const Text("College Analytics",
-            style: TextStyle(color: Colors.white)),
-        backgroundColor: Color(0xff4338CA),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -107,184 +66,113 @@ class _CollegeAnalyticsState extends State<CollegeAnalytics> {
           ),
         ),
       ),
-      body: Center(
-        child: ListView(
-          children: [
-            // Padding(
-            //   padding: const EdgeInsets.all(8.0),
-            //   child: Card(
-            //     elevation: 10,
-            //     child: Container(
-            //       decoration: BoxDecoration(
-            //         color: Colors.white,
-            //         borderRadius: BorderRadius.circular(10),
-            //       ),
-            //       child: Padding(
-            //         padding: const EdgeInsets.all(8.0),
-            //         child: Text(
-            //           "Total Jobs Applied: $totalJobsApplied",
-            //           style: GoogleFonts.montserrat(
-            //             fontSize: 20,
-            //             fontWeight: FontWeight.w600,
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //   ),
-            // ),
-            // Padding(
-            //   padding: const EdgeInsets.all(8.0),
-            //   child: Card(
-            //     elevation: 10,
-            //     child: Container(
-            //       decoration: BoxDecoration(
-            //         color: Colors.white,
-            //         borderRadius: BorderRadius.circular(10),
-            //       ),
-            //       child: Padding(
-            //         padding: const EdgeInsets.all(8.0),
-            //         child: Text(
-            //           "Total Jobs Selected: $totalJobsSelected",
-            //           style: GoogleFonts.montserrat(
-            //             fontSize: 20,
-            //             fontWeight: FontWeight.w600,
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //   ),
-            // ),
-            Padding(
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : ListView(
               padding: const EdgeInsets.all(8.0),
-              child: Card(
-                elevation: 10,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+              children: [
+                Card(
+                  elevation: 4,
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10.0, horizontal: 8.0),
                     child: Text(
-                      "SSC Average : " + _sscAverage.toString() + "%",
-                      style: GoogleFonts.montserrat(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
+                      "Total Registered Students: $registeredStudents",
+                      style: GoogleFonts.aBeeZee(
+                        fontSize: 20.0,
                       ),
                     ),
                   ),
                 ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Card(
-                elevation: 10,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+                Card(
+                  elevation: 4,
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10.0, horizontal: 8.0),
                     child: Text(
-                      "HSC Average : " + _hscAverage.toString() + "%",
-                      style: GoogleFonts.montserrat(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
+                      "Total Job Offers: ${jobsData.length}",
+                      style: GoogleFonts.aBeeZee(
+                        fontSize: 20.0,
                       ),
                     ),
                   ),
                 ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Card(
-                elevation: 10,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "CGPA Average : " + _cgpaAverage.toString(),
-                      style: GoogleFonts.montserrat(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
+                Card(
+                  elevation: 5,
+                  child: Column(
+                    children: [
+                      SizedBox(height: 8.0),
+                      Text(
+                        "Company-wise Placement",
+                        style: GoogleFonts.aBeeZee(
+                          fontSize: 22.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Card(
-                elevation: 10,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "Total Students : " + studentData.length.toString(),
-                      style: GoogleFonts.montserrat(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
+                      SizedBox(height: 8.0),
+                      PieChart(
+                        dataMap: companyCount,
+                        chartValuesOptions: ChartValuesOptions(
+                          decimalPlaces: 0,
+                          chartValueStyle: GoogleFonts.poppins(
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        legendOptions: LegendOptions(
+                          legendPosition: LegendPosition.bottom,
+                          showLegendsInRow: true,
+                          legendTextStyle: GoogleFonts.poppins(
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
                 ),
-              ),
-            ),
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text("Jobs Analytics",
-                    style: GoogleFonts.montserrat(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    )),
-              ),
-            ),
-            // Make a pie chart for the data
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Card(
-                elevation: 10,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
+                Card(
+                  elevation: 5,
+                  child: Column(
+                    children: [
+                      SizedBox(height: 8.0),
+                      Text(
+                        "Branch-wise Placement",
+                        style: GoogleFonts.aBeeZee(
+                          fontSize: 22.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 8.0),
+                      PieChart(
+                        dataMap: branchCount,
+                        chartValuesOptions: ChartValuesOptions(
+                          decimalPlaces: 0,
+                          chartValueStyle: GoogleFonts.poppins(
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        legendOptions: LegendOptions(
+                          legendPosition: LegendPosition.bottom,
+                          showLegendsInRow: true,
+                          legendTextStyle: GoogleFonts.poppins(
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: PieChart(
-                      dataMap: {
-                        'Jobs Applied':
-                            double.parse(totalJobsApplied.toString()),
-                        'Jobs Selected':
-                            double.parse(totalJobsSelected.toString()),
-                      },
-                      chartType: ChartType.disc,
-                      colorList: [
-                        Colors.blue,
-                        Colors.green,
-                      ],
-                    ),
-                  ),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
                 ),
-              ),
+              ],
             ),
-            // Make a pie chart using fl_chart
-          ],
-        ),
-      ),
     );
   }
 }

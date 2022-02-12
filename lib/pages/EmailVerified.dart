@@ -91,6 +91,7 @@ class _EmailVerifiedState extends State<EmailVerified> {
                           elevation: 0),
                       onPressed: () {
                         _auth.signOut();
+                        Navigator.pop(context);
                       },
                       child: Text("Logout")),
                 ),

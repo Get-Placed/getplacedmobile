@@ -10,7 +10,7 @@ import 'package:placement_cell/services/values.dart';
 
 class Home extends StatefulWidget {
   final String clgName;
-  final String userName, userEmail, dob, cgpa, yoc, resume, photo;
+  final String userName, userEmail, dob, cgpa, yoc, branch, resume, photo;
   const Home({
     Key? key,
     required this.clgName,
@@ -19,6 +19,7 @@ class Home extends StatefulWidget {
     required this.cgpa,
     required this.dob,
     required this.yoc,
+    required this.branch,
     required this.resume,
     required this.photo,
   });
@@ -204,6 +205,7 @@ class _HomeState extends State<Home> {
                                         jobID: snapshot.data.docs[index].id,
                                         userName: widget.userName,
                                         clgName: widget.clgName,
+                                        branch: widget.branch,
                                       ),
                                     ),
                                   );

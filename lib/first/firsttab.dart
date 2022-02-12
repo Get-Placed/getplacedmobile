@@ -59,6 +59,7 @@ class _MainTabState extends State<MainTab> {
               dob: userdata['dob'],
               cgpa: userdata['cgpa'],
               yoc: userdata['yoc'],
+              branch: userdata['dept'],
               resume: userdata['resume'] ?? "NA",
               photo: userdata['photo'] ?? "NA",
             ));
