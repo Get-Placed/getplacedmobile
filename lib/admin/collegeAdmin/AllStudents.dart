@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:placement_cell/admin/collegeAdmin/StudentPage.dart';
 import 'package:placement_cell/admin/collegeAdmin/stdJobInfo.dart';
 import 'package:placement_cell/services/auth.dart';
@@ -21,31 +22,19 @@ class AllStudents extends StatefulWidget {
 }
 
 class _AllStudentsState extends State<AllStudents> {
-  late QuerySnapshot<Map<String, dynamic>> stdData;
-  bool isLoading = true;
+  late Query<Map<String, dynamic>> stdInstance;
 
   @override
   void initState() {
     super.initState();
-    Future.delayed(
-      Duration(seconds: 2),
-    );
     loadstdList();
   }
 
-  loadstdList() async {
-    await FirebaseFirestore.instance
+  loadstdList() {
+    stdInstance = FirebaseFirestore.instance
         .collection("Users")
         .where("role", isEqualTo: 0)
-        .where("userFrom", isEqualTo: widget.clgName)
-        .get()
-        .then((value) {
-      setState(() {
-        stdData = value;
-        isLoading = false;
-      });
-      print(stdData);
-    });
+        .where("userFrom", isEqualTo: widget.clgName);
   }
 
   AuthService _authService = AuthService();
@@ -102,6 +91,7 @@ class _AllStudentsState extends State<AllStudents> {
       );
       return;
     }
+    QuerySnapshot<Map<String, dynamic>> stdData = await stdInstance.get();
     List<List<String>> csvData = [
       [
         "Name",
@@ -155,55 +145,65 @@ class _AllStudentsState extends State<AllStudents> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: k_themeColor,
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title:
-            const Text("All Students", style: TextStyle(color: Colors.white)),
-        backgroundColor: Color(0xff4338CA),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xff000000), Color(0xff7f8c8d)],
-              stops: [0.5, 1.0],
-            ),
-          ),
+        iconTheme: IconThemeData(color: Colors.black),
+        title: Text(
+          "GetPlaced",
+          style: GoogleFonts.aBeeZee(color: Colors.black, fontSize: 30.0),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              _onBackPressed();
-            },
-            icon: Icon(
-              Icons.power_settings_new_outlined,
-              color: Colors.white,
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0.0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+      ),
+      drawer: Drawer(),
+      body: Column(
+        children: [
+          SizedBox(height: 8.0),
+          Text(
+            "Students List",
+            style: GoogleFonts.aBeeZee(fontSize: 25.0),
+          ),
+          SizedBox(height: 8.0),
+          Expanded(
+            child: StreamBuilder(
+              stream: stdInstance.snapshots(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                return !snapshot.hasData
+                    ? Center(child: CircularProgressIndicator())
+                    : ListView.builder(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 12.0, vertical: 8.0),
+                        physics: BouncingScrollPhysics(),
+                        itemCount: snapshot.data.docs.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Card(
+                            elevation: 5.0,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15.0)),
+                            child: ListTile(
+                              title: Text(
+                                  snapshot.data.docs[index].data()['userName']),
+                              subtitle: Text(
+                                  snapshot.data.docs[index].data()['email']),
+                              onTap: () {
+                                Get.to(
+                                  () => StudentPage(
+                                    userEmail: snapshot.data.docs[index]
+                                        .data()["email"],
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      );
+              },
             ),
           ),
         ],
       ),
-      body: isLoading
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : ListView(
-              children: stdData.docs.map<Widget>((doc) {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Card(
-                    child: ListTile(
-                      title: Text(doc['userName']),
-                      subtitle: Text(doc['email']),
-                      onTap: () {
-                        Get.to(
-                          () => StudentPage(
-                            userEmail: doc["email"],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           _exportStudentData();

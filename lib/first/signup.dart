@@ -56,6 +56,10 @@ class _SignupState extends State<Signup> {
   AuthService _authService = AuthService();
 
   signUP() async {
+    email = email.trim();
+    password = password.trim();
+    username = username.trim();
+    confirmpass = confirmpass.trim();
     try {
       if (_formKey.currentState!.validate()) {
         _formKey.currentState!.save();
@@ -72,9 +76,9 @@ class _SignupState extends State<Signup> {
         }
         await _authService
             .signUpEmailPass(
-          email.trim(),
+          email,
           password,
-          username.trim(),
+          username,
           userRole,
           userClg,
         )
@@ -84,7 +88,7 @@ class _SignupState extends State<Signup> {
             print(value);
             await FirebaseFirestore.instance
                 .collection("Users")
-                .doc(email.trim())
+                .doc(email)
                 .update({
               "ssc": ssc,
               "hsc": hsc.isEmpty ? "N/A" : hsc,
@@ -634,7 +638,7 @@ class _SignupState extends State<Signup> {
                   ),
                 ),
                 SizedBox(
-                  height: size.height * 0.08,
+                  height: size.height * 0.05,
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -658,7 +662,7 @@ class _SignupState extends State<Signup> {
                   ),
                 ),
                 SizedBox(
-                  height: size.height * 0.08,
+                  height: size.height * 0.05,
                 ),
               ],
             ),

@@ -28,6 +28,8 @@ class _LoginState extends State<Login> {
 
   AuthService _authService = AuthService();
   signIn() async {
+    email = email.trim();
+    password = password.trim();
     try {
       if (_formKey.currentState!.validate()) {
         _formKey.currentState!.save();
@@ -145,7 +147,7 @@ class _LoginState extends State<Login> {
                             },
                           ),
                           SizedBox(
-                            height: size.height * 0.04,
+                            height: size.height * 0.05,
                           ),
                           buildFormTile(
                             obsText: true,
@@ -178,7 +180,7 @@ class _LoginState extends State<Login> {
                             ),
                           ),
                           SizedBox(
-                            height: size.height * 0.09,
+                            height: size.height * 0.05,
                           ),
                         ],
                       ),
@@ -186,7 +188,7 @@ class _LoginState extends State<Login> {
                   ),
                 ),
                 SizedBox(
-                  height: size.height * 0.08,
+                  height: size.height * 0.05,
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -210,7 +212,7 @@ class _LoginState extends State<Login> {
                   ),
                 ),
                 SizedBox(
-                  height: size.height * 0.08,
+                  height: size.height * 0.05,
                 ),
               ],
             ),

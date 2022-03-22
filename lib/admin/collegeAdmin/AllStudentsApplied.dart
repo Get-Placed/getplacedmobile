@@ -138,86 +138,66 @@ class _AllStudentsAppliedState extends State<AllStudentsApplied> {
       child: Scaffold(
         backgroundColor: k_themeColor,
         appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: const Text(
-            "Students Application Job List",
-            style: TextStyle(color: Colors.white),
+          iconTheme: IconThemeData(color: Colors.black),
+          title: Text(
+            "GetPlaced",
+            style: GoogleFonts.aBeeZee(color: Colors.black, fontSize: 30.0),
           ),
-          backgroundColor: Color(0xff4338CA),
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xff000000), Color(0xff7f8c8d)],
-                stops: [0.5, 1.0],
-              ),
-            ),
-          ),
-          actions: [
-            IconButton(
-              onPressed: () {
-                _onBackPressed();
-              },
-              icon: Icon(
-                Icons.power_settings_new_outlined,
-                color: Colors.white,
-              ),
-            ),
-          ],
+          centerTitle: true,
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+          systemOverlayStyle: SystemUiOverlayStyle.light,
         ),
+        drawer: Drawer(),
         body: Column(
           children: <Widget>[
-            SizedBox(
-              height: size.height * 0.04,
-            ),
             Expanded(
-              child: Container(
-                child: StreamBuilder(
-                  stream: appliedJob.snapshots(),
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    return !snapshot.hasData
-                        ? Center(
-                            child: CircularProgressIndicator(),
-                          )
-                        : ListView.builder(
-                            shrinkWrap: true,
-                            physics: BouncingScrollPhysics(),
-                            itemCount: snapshot.data.docs.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return InkWell(
-                                onTap: () {
-                                  Get.to(
-                                    () => StudentJobInfo(
-                                      userEmail: snapshot.data.docs[index]
-                                          .data()["userEmail"],
-                                      jobid: snapshot.data.docs[index]
-                                          .data()["jobid"],
-                                      appliedID: snapshot.data.docs[index].id,
-                                      compName: snapshot.data.docs[index]
-                                          .data()["compName"],
-                                    ),
-                                  );
-                                },
-                                child: buildApplyJob(
-                                  size,
-                                  appliedName: snapshot.data.docs[index]
-                                      .data()["appliedName"],
-                                  designation: snapshot.data.docs[index]
-                                      .data()["designation"],
-                                  compName: snapshot.data.docs[index]
-                                      .data()["compName"],
-                                  compOwner:
-                                      snapshot.data.docs[index].data()["owner"],
-                                  logo: snapshot.data.docs[index]
-                                      .data()["logoUrl"],
-                                  appliedID: snapshot.data.docs[index].id,
-                                  status: snapshot.data.docs[index]
-                                      .data()["status"],
-                                ),
-                              );
-                            },
-                          );
-                  },
-                ),
+              child: StreamBuilder(
+                stream: appliedJob.snapshots(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  return !snapshot.hasData
+                      ? Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : ListView.builder(
+                          padding: EdgeInsets.only(top: 8.0),
+                          physics: BouncingScrollPhysics(),
+                          itemCount: snapshot.data.docs.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return InkWell(
+                              onTap: () {
+                                Get.to(
+                                  () => StudentJobInfo(
+                                    userEmail: snapshot.data.docs[index]
+                                        .data()["userEmail"],
+                                    jobid: snapshot.data.docs[index]
+                                        .data()["jobid"],
+                                    appliedID: snapshot.data.docs[index].id,
+                                    compName: snapshot.data.docs[index]
+                                        .data()["compName"],
+                                  ),
+                                );
+                              },
+                              child: buildApplyJob(
+                                size,
+                                appliedName: snapshot.data.docs[index]
+                                    .data()["appliedName"],
+                                designation: snapshot.data.docs[index]
+                                    .data()["designation"],
+                                compName: snapshot.data.docs[index]
+                                    .data()["compName"],
+                                compOwner:
+                                    snapshot.data.docs[index].data()["owner"],
+                                logo:
+                                    snapshot.data.docs[index].data()["logoUrl"],
+                                appliedID: snapshot.data.docs[index].id,
+                                status:
+                                    snapshot.data.docs[index].data()["status"],
+                              ),
+                            );
+                          },
+                        );
+                },
               ),
             ),
           ],

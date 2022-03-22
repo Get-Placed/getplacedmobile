@@ -3,7 +3,7 @@ import 'package:placement_cell/admin/CompAnalytics.dart';
 import 'package:placement_cell/admin/collegeAdmin/AllJobsCollege.dart';
 import 'package:placement_cell/admin/collegeAdmin/AllStudents.dart';
 import 'package:placement_cell/admin/collegeAdmin/AllStudentsApplied.dart';
-import 'package:placement_cell/admin/collegeAdmin/CollegeAnalystics.dart';
+import 'package:placement_cell/admin/collegeAdmin/CollegeAnalytics.dart';
 import 'package:placement_cell/admin/compAdmin/TrackJobs.dart';
 import 'package:placement_cell/admin/compAdmin/compHome.dart';
 import 'package:placement_cell/admin/compAdmin/compTrackInfo.dart';
@@ -33,12 +33,10 @@ class _CollegeNavTabState extends State<CollegeNavTab> {
   @override
   Widget build(BuildContext context) {
     List<Widget> _widgets = [
-      AllStudents(
-        clgName: widget.clgName,
-      ),
+      CollegeAnalytics(collegeName: widget.clgName),
+      AllStudents(clgName: widget.clgName),
       AllStudentsApplied(clgName: widget.clgName),
       AllJobsCollege(clgName: widget.clgName),
-      CollegeAnalytics(collegeName: widget.clgName),
     ];
     return Scaffold(
       body: _widgets.elementAt(_selectedIndex),
@@ -51,19 +49,19 @@ class _CollegeNavTabState extends State<CollegeNavTab> {
         unselectedItemColor: Colors.grey,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
+            icon: Icon(Icons.assessment),
+            label: "Analytics",
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.people),
-            label: "",
+            label: "Students List",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.list),
-            label: "",
+            label: "Job Applications",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.stacked_line_chart_outlined),
-            label: "",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.assessment),
             label: "",
           ),
         ],

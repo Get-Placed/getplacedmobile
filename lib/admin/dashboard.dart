@@ -146,9 +146,8 @@ class _DashboardState extends State<Dashboard> {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: Colors.transparent,
-          systemOverlayStyle: SystemUiOverlayStyle.light,
           elevation: 0.0,
-          title: InkWell(
+          leading: InkWell(
             onTap: () {
               _scaffoldKey.currentState!.openDrawer();
             },
@@ -162,6 +161,15 @@ class _DashboardState extends State<Dashboard> {
                   Icons.menu_rounded,
                   color: k_btnColor,
                 ),
+              ),
+            ),
+          ),
+          title: Center(
+            child: Text(
+              "GetPlaced",
+              style: GoogleFonts.aBeeZee(
+                color: Colors.black,
+                fontSize: 24.0,
               ),
             ),
           ),
