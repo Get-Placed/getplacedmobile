@@ -56,10 +56,6 @@ class _SignupState extends State<Signup> {
   AuthService _authService = AuthService();
 
   signUP() async {
-    email = email.trim();
-    password = password.trim();
-    username = username.trim();
-    confirmpass = confirmpass.trim();
     try {
       if (_formKey.currentState!.validate()) {
         _formKey.currentState!.save();
@@ -134,6 +130,7 @@ class _SignupState extends State<Signup> {
       child: Scaffold(
         backgroundColor: k_themeColor,
         body: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
           child: Form(
             key: _formKey,
             child: Column(
@@ -145,6 +142,7 @@ class _SignupState extends State<Signup> {
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Card(
+                    elevation: 5.0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(25.0),
                     ),
@@ -162,10 +160,10 @@ class _SignupState extends State<Signup> {
                             label: "Email",
                             icon: Icons.email_outlined,
                             val: (val) {
-                              return val!.isEmpty ? "Enter the Email" : null;
+                              return val!.isEmpty ? "Enter Email" : null;
                             },
-                            onChange: (value) {
-                              email = value;
+                            onSave: (value) {
+                              email = value!.trim();
                             },
                           ),
                           sizedH1,
@@ -175,10 +173,10 @@ class _SignupState extends State<Signup> {
                             label: "Username",
                             icon: Icons.person_outline,
                             val: (val) {
-                              return val!.isEmpty ? "Enter the Username" : null;
+                              return val!.isEmpty ? "Enter Username" : null;
                             },
-                            onChange: (value) {
-                              username = value;
+                            onSave: (value) {
+                              username = value!.trim();
                             },
                           ),
                           sizedH1,
@@ -189,10 +187,10 @@ class _SignupState extends State<Signup> {
                             label: "Password",
                             icon: Icons.lock_outline,
                             val: (val) {
-                              return val!.isEmpty ? "Enter the Password" : null;
+                              return val!.isEmpty ? "Enter Password" : null;
                             },
-                            onChange: (value) {
-                              password = value;
+                            onSave: (value) {
+                              password = value!.trim();
                             },
                           ),
                           sizedH1,
@@ -202,13 +200,13 @@ class _SignupState extends State<Signup> {
                             size: size,
                             label: "Confirm Password",
                             val: (val) {
-                              return val!.isEmpty || password != confirmpass
+                              return (val!.isEmpty || password != confirmpass)
                                   ? "Password does not match"
                                   : null;
                             },
                             icon: Icons.lock_outline,
-                            onChange: (value) {
-                              confirmpass = value;
+                            onSave: (value) {
+                              confirmpass = value!.trim();
                             },
                           ),
                           sizedH1,
@@ -236,8 +234,8 @@ class _SignupState extends State<Signup> {
                           TextFormField(
                             readOnly: true,
                             controller: dateCtl,
-                            onChanged: (value) {
-                              dob = value;
+                            onSaved: (value) {
+                              dob = value!;
                             },
                             validator: (value) {
                               return value!.isEmpty
@@ -299,28 +297,29 @@ class _SignupState extends State<Signup> {
                                   size: size,
                                   label: "SSC Marks *",
                                   icon: Icons.grading_outlined,
-                                  onChange: (value) {
-                                    ssc = value;
+                                  onSave: (value) {
+                                    ssc = value!.trim();
                                   },
                                   val: (val) {
                                     return val!.isEmpty
-                                        ? "Enter the SSC Marks"
+                                        ? "Enter SSC Marks"
                                         : null;
                                   },
                                 ),
                               ),
+                              SizedBox(width: 10.0),
                               Expanded(
                                 child: buildFormTile(
                                   align: TextAlign.center,
                                   size: size,
                                   label: "SSC YOC",
                                   icon: Icons.grading_outlined,
-                                  onChange: (value) {
-                                    sscyoc = value;
+                                  onSave: (value) {
+                                    sscyoc = value!.trim();
                                   },
                                   val: (val) {
                                     return val!.isEmpty
-                                        ? "Enter the SSC YOC"
+                                        ? "Enter SSC YOC"
                                         : null;
                                   },
                                 ),
@@ -335,21 +334,22 @@ class _SignupState extends State<Signup> {
                                 child: buildFormTile(
                                   align: TextAlign.center,
                                   size: size,
-                                  label: "HSC Marks *",
+                                  label: "HSC Marks",
                                   icon: Icons.grading_outlined,
-                                  onChange: (value) {
-                                    hsc = value;
+                                  onSave: (value) {
+                                    hsc = value!.trim();
                                   },
                                 ),
                               ),
+                              SizedBox(width: 10.0),
                               Expanded(
                                 child: buildFormTile(
                                   align: TextAlign.center,
                                   size: size,
                                   label: "HSC YOC",
                                   icon: Icons.grading_outlined,
-                                  onChange: (value) {
-                                    hscyoc = value;
+                                  onSave: (value) {
+                                    hscyoc = value!.trim();
                                   },
                                 ),
                               ),
@@ -430,7 +430,7 @@ class _SignupState extends State<Signup> {
                             padding: const EdgeInsets.all(8.0),
                             child: DropdownButtonFormField(
                               validator: (value) => value == null
-                                  ? 'Please select the College'
+                                  ? 'Please select College'
                                   : null,
                               style: TextStyle(
                                 fontSize: 20.0,
@@ -469,10 +469,10 @@ class _SignupState extends State<Signup> {
                                 child: buildFormTile(
                                   align: TextAlign.center,
                                   size: size,
-                                  label: "SEM 1 *",
+                                  label: "SEM 1",
                                   icon: Icons.grading_outlined,
-                                  onChange: (value) {
-                                    sem1 = value;
+                                  onSave: (value) {
+                                    sem1 = value!.trim();
                                   },
                                 ),
                               ),
@@ -483,10 +483,10 @@ class _SignupState extends State<Signup> {
                                 child: buildFormTile(
                                   align: TextAlign.center,
                                   size: size,
-                                  label: "SEM 2 *",
+                                  label: "SEM 2",
                                   icon: Icons.grading_outlined,
-                                  onChange: (value) {
-                                    sem2 = value;
+                                  onSave: (value) {
+                                    sem2 = value!.trim();
                                   },
                                 ),
                               ),
@@ -501,12 +501,12 @@ class _SignupState extends State<Signup> {
                                   size: size,
                                   label: "SEM 3 *",
                                   icon: Icons.grading_outlined,
-                                  onChange: (value) {
-                                    sem3 = value;
+                                  onSave: (value) {
+                                    sem3 = value!.trim();
                                   },
                                   val: (val) {
                                     return val!.isEmpty
-                                        ? "Enter the SEM 3 Marks"
+                                        ? "Enter SEM 3 Marks"
                                         : null;
                                   },
                                 ),
@@ -520,12 +520,12 @@ class _SignupState extends State<Signup> {
                                   size: size,
                                   label: "SEM 4 *",
                                   icon: Icons.grading_outlined,
-                                  onChange: (value) {
-                                    sem4 = value;
+                                  onSave: (value) {
+                                    sem4 = value!.trim();
                                   },
                                   val: (val) {
                                     return val!.isEmpty
-                                        ? "Enter the SEM 4 Marks"
+                                        ? "Enter SEM 4 Marks"
                                         : null;
                                   },
                                 ),
@@ -541,8 +541,8 @@ class _SignupState extends State<Signup> {
                                   size: size,
                                   label: "SEM 5",
                                   icon: Icons.grading_outlined,
-                                  onChange: (value) {
-                                    sem5 = value;
+                                  onSave: (value) {
+                                    sem5 = value!.trim();
                                   },
                                 ),
                               ),
@@ -555,8 +555,8 @@ class _SignupState extends State<Signup> {
                                   size: size,
                                   label: "SEM 6",
                                   icon: Icons.grading_outlined,
-                                  onChange: (value) {
-                                    sem6 = value;
+                                  onSave: (value) {
+                                    sem6 = value!.trim();
                                   },
                                 ),
                               ),
@@ -571,8 +571,8 @@ class _SignupState extends State<Signup> {
                                   size: size,
                                   label: "SEM 7",
                                   icon: Icons.grading_outlined,
-                                  onChange: (value) {
-                                    sem7 = value;
+                                  onSave: (value) {
+                                    sem7 = value!.trim();
                                   },
                                 ),
                               ),
@@ -585,8 +585,8 @@ class _SignupState extends State<Signup> {
                                   size: size,
                                   label: "SEM 8",
                                   icon: Icons.grading_outlined,
-                                  onChange: (value) {
-                                    sem8 = value;
+                                  onSave: (value) {
+                                    sem8 = value!.trim();
                                   },
                                 ),
                               ),
@@ -601,8 +601,8 @@ class _SignupState extends State<Signup> {
                                   size: size,
                                   label: "YOC",
                                   icon: Icons.calendar_today,
-                                  onChange: (value) {
-                                    yoc = value;
+                                  onSave: (value) {
+                                    yoc = value!.trim();
                                   },
                                 ),
                               ),
@@ -615,8 +615,8 @@ class _SignupState extends State<Signup> {
                                   size: size,
                                   label: "CGPA",
                                   icon: Icons.star_border,
-                                  onChange: (value) {
-                                    cgpa = value;
+                                  onSave: (value) {
+                                    cgpa = value!.trim();
                                   },
                                 ),
                               ),
@@ -628,8 +628,8 @@ class _SignupState extends State<Signup> {
                             size: size,
                             label: "Diploma CGPA",
                             icon: Icons.star_border,
-                            onChange: (value) {
-                              dipcgpa = value;
+                            onSave: (value) {
+                              dipcgpa = value!.trim();
                             },
                           ),
                         ],
@@ -676,7 +676,7 @@ class _SignupState extends State<Signup> {
     required Size size,
     required String label,
     required IconData icon,
-    required Function(String value) onChange,
+    required void Function(String? value)? onSave,
     String? Function(String? value)? val,
     TextInputType? type,
     TextAlign align = TextAlign.start,
@@ -697,7 +697,7 @@ class _SignupState extends State<Signup> {
             Text(
               label,
               style: TextStyle(
-                fontSize: 20.0,
+                fontSize: 18.0,
                 color: k_btnColor,
               ),
             ),
@@ -712,7 +712,7 @@ class _SignupState extends State<Signup> {
           validator: val,
           obscureText: obsText,
           keyboardType: type,
-          onChanged: onChange,
+          onSaved: onSave,
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.grey[300],

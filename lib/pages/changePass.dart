@@ -11,7 +11,7 @@ class ChangePassword extends StatefulWidget {
 }
 
 class _ChangePasswordState extends State<ChangePassword> {
-  final String user = "Nitish";
+  final String user = "";
 
   UpdateProfileController _controller = Get.put(UpdateProfileController());
 
@@ -22,7 +22,7 @@ class _ChangePasswordState extends State<ChangePassword> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
         appBar: AppBar(
-          title: Text("Welcome $user"),
+          title: Text("Welcome"),
         ),
         body: GetBuilder<UpdateProfileController>(
           init: _controller,

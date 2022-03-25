@@ -174,27 +174,30 @@ class _CreateCompaniesState extends State<CreateCompanies> {
                     },
                   ),
                 ),
+                SizedBox(height: 10.0),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      createComp();
+                    },
+                    child: Text(
+                      "Add",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20.0),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.blue,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 15.0, horizontal: 50.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                    ),
+                  ),
+                ),
               ],
-            ),
-          ),
-        ),
-        floatingActionButton: FloatingActionButton.extended(
-          splashColor: Colors.blue[800],
-          backgroundColor: Colors.blue,
-          onPressed: () {
-            createComp();
-          },
-          icon: Icon(
-            Icons.add,
-            color: Colors.black,
-            size: 28.0,
-          ),
-          label: Text(
-            "Add",
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 20.0,
             ),
           ),
         ),

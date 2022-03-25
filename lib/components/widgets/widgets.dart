@@ -11,7 +11,7 @@ Widget buildHeaderText({
       text: TextSpan(
         style: TextStyle(
           color: Colors.black,
-          fontSize: 35.0,
+          fontSize: 30.0,
           fontWeight: FontWeight.bold,
         ),
         children: <TextSpan>[

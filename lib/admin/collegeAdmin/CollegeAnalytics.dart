@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:placement_cell/services/values.dart';
@@ -57,18 +56,6 @@ class _CollegeAnalyticsState extends State<CollegeAnalytics> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: k_themeColor,
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.black),
-        title: Text(
-          "GetPlaced",
-          style: GoogleFonts.aBeeZee(color: Colors.black, fontSize: 30.0),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-      ),
-      drawer: Drawer(),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : ListView(

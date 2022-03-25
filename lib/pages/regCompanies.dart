@@ -32,22 +32,13 @@ class _RegisteredCompaniesState extends State<RegisteredCompanies> {
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(
-            Icons.arrow_back_ios,
+            Icons.arrow_back_ios_new,
             color: Colors.black,
           ),
           onPressed: () {
             Navigator.maybePop(context);
           },
         ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Icons.power_settings_new_outlined,
-              color: Colors.red,
-            ),
-          ),
-        ],
         backgroundColor: Colors.transparent,
         elevation: 0.0,
         systemOverlayStyle: SystemUiOverlayStyle.light,

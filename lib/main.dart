@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-import 'package:placement_cell/first/firsttab.dart';
-import 'package:placement_cell/services/values.dart';
+import 'first/firsttab.dart';
+import 'services/values.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

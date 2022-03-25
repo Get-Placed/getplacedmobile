@@ -132,16 +132,18 @@ class _UpdateProfileState extends State<UpdateProfile> {
           title: Text(
             "Profile",
             style: GoogleFonts.aBeeZee(
-              color: Colors.black,
+              fontSize: 30.0,
+              color: Colors.blue,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          automaticallyImplyLeading: false,
+          centerTitle: true,
           leading: IconButton(
             onPressed: () {
               Navigator.maybePop(context);
             },
             icon: Icon(
-              Icons.arrow_back_ios,
+              Icons.arrow_back_ios_new,
               color: Colors.black,
             ),
           ),

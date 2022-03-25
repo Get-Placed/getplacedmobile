@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:placement_cell/components/StudentController.dart';
 import 'package:placement_cell/services/database.dart';
 import 'package:placement_cell/services/values.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 class AdminCompanyInfo extends StatefulWidget {
   final String designation,

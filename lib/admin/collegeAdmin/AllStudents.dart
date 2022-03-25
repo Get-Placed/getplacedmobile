@@ -1,14 +1,10 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:placement_cell/admin/collegeAdmin/StudentPage.dart';
-import 'package:placement_cell/admin/collegeAdmin/stdJobInfo.dart';
-import 'package:placement_cell/services/auth.dart';
 import 'package:placement_cell/services/values.dart';
 import 'package:csv/csv.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -35,50 +31,6 @@ class _AllStudentsState extends State<AllStudents> {
         .collection("Users")
         .where("role", isEqualTo: 0)
         .where("userFrom", isEqualTo: widget.clgName);
-  }
-
-  AuthService _authService = AuthService();
-
-  Future<bool?> _onBackPressed() {
-    return showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(
-            20.0,
-          ),
-        ),
-        // alert on back button pressed
-        title: Text(
-          "Alert",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        content: Text(
-          "You will be logged out of Session!",
-        ),
-        actions: <Widget>[
-          TextButton(
-            child: Text(
-              "Cancel",
-            ),
-            onPressed: () => Navigator.pop(context, false),
-          ),
-          TextButton(
-            child: Text(
-              "OK",
-            ),
-            onPressed: () {
-              _authService.signOut().then(
-                    (value) => Navigator.of(context)
-                        .popUntil((route) => route.isFirst),
-                  );
-            },
-          ),
-        ],
-      ),
-    );
   }
 
   Future<void> _exportStudentData() async {
@@ -146,26 +98,15 @@ class _AllStudentsState extends State<AllStudents> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: k_themeColor,
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.black),
-        title: Text(
-          "GetPlaced",
-          style: GoogleFonts.aBeeZee(color: Colors.black, fontSize: 30.0),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-      ),
-      drawer: Drawer(),
       body: Column(
         children: [
-          SizedBox(height: 8.0),
-          Text(
-            "Students List",
-            style: GoogleFonts.aBeeZee(fontSize: 25.0),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Text(
+              "Students List",
+              style: GoogleFonts.aBeeZee(fontSize: 25.0),
+            ),
           ),
-          SizedBox(height: 8.0),
           Expanded(
             child: StreamBuilder(
               stream: stdInstance.snapshots(),
@@ -208,11 +149,10 @@ class _AllStudentsState extends State<AllStudents> {
         onPressed: () {
           _exportStudentData();
         },
-        label: const Text("Download Student Data"),
+        label: const Text("Export to CSV"),
         icon: const Icon(Icons.file_download_outlined),
         backgroundColor: Colors.black,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }

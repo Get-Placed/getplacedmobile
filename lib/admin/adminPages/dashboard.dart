@@ -1,14 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fl_chart/fl_chart.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:placement_cell/admin/adminPages/AdminJobList.dart';
-import 'package:placement_cell/admin/adminPages/createClgAcc.dart';
-import 'package:placement_cell/admin/adminPages/createCompAcc.dart';
 import 'package:placement_cell/admin/adminPages/stdList.dart';
 import 'package:placement_cell/components/adminDrawer.dart';
 import 'package:placement_cell/pages/regCompanies.dart';
@@ -144,35 +140,27 @@ class _DashboardState extends State<Dashboard> {
         drawer: AdminDrawer(),
         backgroundColor: k_themeColor,
         appBar: AppBar(
-          automaticallyImplyLeading: false,
+          iconTheme: IconThemeData(color: Colors.black),
           backgroundColor: Colors.transparent,
           elevation: 0.0,
-          leading: InkWell(
-            onTap: () {
-              _scaffoldKey.currentState!.openDrawer();
-            },
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(13.0),
-                child: Icon(
-                  Icons.menu_rounded,
-                  color: k_btnColor,
+          title: RichText(
+            text: TextSpan(
+              children: [
+                WidgetSpan(
+                  child: Icon(
+                    Icons.near_me_outlined,
+                    color: Colors.orange.shade800,
+                    size: 35.0,
+                  ),
                 ),
-              ),
+                TextSpan(
+                  text: "GetPlaced",
+                  style: GoogleFonts.aBeeZee(color: k_btnColor, fontSize: 30.0),
+                ),
+              ],
             ),
           ),
-          title: Center(
-            child: Text(
-              "GetPlaced",
-              style: GoogleFonts.aBeeZee(
-                color: Colors.black,
-                fontSize: 24.0,
-              ),
-            ),
-          ),
+          centerTitle: true,
           actions: [
             IconButton(
               onPressed: () {
@@ -189,6 +177,7 @@ class _DashboardState extends State<Dashboard> {
           child: Container(
             margin: EdgeInsets.symmetric(horizontal: 20),
             child: ListView(
+              physics: BouncingScrollPhysics(),
               children: <Widget>[
                 sizedH1,
                 InkWell(
@@ -253,47 +242,6 @@ class _DashboardState extends State<Dashboard> {
             ),
           ),
         ),
-        floatingActionButton: _getFab(size),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-      ),
-    );
-  }
-
-  Widget _getFab(
-    Size size,
-  ) {
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          FloatingActionButton(
-            heroTag: "clg",
-            backgroundColor: Colors.blue,
-            onPressed: () {
-              Get.to(() => ClgAccount());
-            },
-            child: Icon(
-              Icons.school,
-              color: Colors.white,
-            ),
-          ),
-          SizedBox(
-            height: size.height * 0.02,
-          ),
-          FloatingActionButton(
-            heroTag: "comp",
-            backgroundColor: Colors.blue,
-            onPressed: () {
-              Get.to(() => CompAccount());
-            },
-            child: Icon(
-              Icons.business,
-              color: Colors.white,
-            ),
-          ),
-          SizedBox(
-            height: size.height * 0.02,
-          ),
-        ],
       ),
     );
   }
@@ -303,40 +251,44 @@ class _DashboardState extends State<Dashboard> {
     required String label,
     required String count,
   }) {
-    return Container(
-      height: size.height * 0.2,
-      width: size.width * 0.8,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20.0),
-        gradient: LinearGradient(
-          colors: [
-            Color(0xFF00F5A0),
-            Color(0xFF00D9F5),
-          ],
+    return Card(
+      elevation: 8.0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+      child: Container(
+        height: size.height * 0.2,
+        width: size.width * 0.8,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20.0),
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFF00F5A0),
+              Color(0xFF00D9F5),
+            ],
+          ),
         ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(35.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Expanded(
-              child: Text(
-                label,
-                style: GoogleFonts.poppins(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.w500,
+        child: Padding(
+          padding: const EdgeInsets.all(35.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Expanded(
+                child: Text(
+                  label,
+                  style: GoogleFonts.poppins(
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
-            ),
-            Text(
-              count,
-              style: GoogleFonts.poppins(
-                color: Colors.white,
-                fontSize: 60.0,
+              Text(
+                count,
+                style: GoogleFonts.poppins(
+                  color: Colors.white,
+                  fontSize: 60.0,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

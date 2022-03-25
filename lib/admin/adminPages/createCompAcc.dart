@@ -89,6 +89,7 @@ class _CompAccountState extends State<CompAccount> {
           elevation: 0.0,
         ),
         body: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
           child: Form(
             key: _formKey,
             child: Column(
@@ -111,8 +112,8 @@ class _CompAccountState extends State<CompAccount> {
                   ),
                 ),
                 buildHeaderText(
-                  start: "Create ",
-                  end: "Company",
+                  start: "Add ",
+                  end: "Company User",
                 ),
                 Padding(
                   padding: const EdgeInsets.all(20.0),
@@ -202,30 +203,37 @@ class _CompAccountState extends State<CompAccount> {
                       conpass = value;
                     }),
                 SizedBox(
-                  height: height * 0.07,
+                  height: size.height * 0.1,
+                ),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      createCompAcc();
+                    },
+                    child: Text(
+                      "Create",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20.0,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.blue,
+                      padding: EdgeInsets.symmetric(
+                          vertical: 15.0, horizontal: 60.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                          30.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: size.height * 0.05,
                 ),
               ],
-            ),
-          ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: FloatingActionButton.extended(
-          splashColor: Colors.blue[800],
-          backgroundColor: Colors.blue,
-          onPressed: () {
-            createCompAcc();
-          },
-          icon: Icon(
-            Icons.add,
-            color: Colors.black,
-            size: 28.0,
-          ),
-          label: Text(
-            "Create",
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 20.0,
             ),
           ),
         ),

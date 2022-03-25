@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:placement_cell/components/drawer.dart';
 import 'package:placement_cell/components/transition.dart';
@@ -113,41 +112,44 @@ class _HomeState extends State<Home> {
           photo: widget.photo,
         ),
         appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: InkWell(
-            onTap: () {
-              _scaffoldKey.currentState!.openDrawer();
-            },
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(13.0),
-                child: Icon(
-                  Icons.menu_rounded,
-                  color: k_btnColor,
+          iconTheme: IconThemeData(color: Colors.black),
+          title: RichText(
+            text: TextSpan(
+              children: [
+                WidgetSpan(
+                  child: Icon(
+                    Icons.near_me_outlined,
+                    color: Colors.orange.shade800,
+                    size: 35.0,
+                  ),
                 ),
-              ),
+                TextSpan(
+                  text: "GetPlaced",
+                  style: GoogleFonts.aBeeZee(
+                    color: k_btnColor,
+                    fontSize: 30.0,
+                  ),
+                ),
+              ],
             ),
           ),
+          centerTitle: true,
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
           actions: [
             IconButton(
               onPressed: () {
                 _onBackPressed();
               },
               icon: Icon(
-                Icons.power_settings_new_outlined,
+                Icons.power_settings_new,
                 color: Colors.red,
               ),
             ),
           ],
-          backgroundColor: Colors.transparent,
-          elevation: 0.0,
-          systemOverlayStyle: SystemUiOverlayStyle.light,
         ),
         body: SingleChildScrollView(
-          physics: ClampingScrollPhysics(),
+          physics: BouncingScrollPhysics(),
           child: Center(
             child: Column(
               children: <Widget>[
@@ -261,12 +263,9 @@ class _HomeState extends State<Home> {
     Color? timeColor,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(
-        left: 30.0,
-        right: 30.0,
-        bottom: 20.0,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 5.0),
       child: Card(
+        elevation: 8.0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(
             20.0,

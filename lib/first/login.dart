@@ -2,11 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:placement_cell/admin/collegeAdmin/AllStudentsApplied.dart';
 import 'package:placement_cell/admin/collegeAdmin/CollegeNavTab.dart';
-import 'package:placement_cell/admin/compAdmin/compHome.dart';
 import 'package:placement_cell/admin/compAdmin/compNavTab.dart';
-import 'package:placement_cell/admin/dashboard.dart';
+import 'package:placement_cell/admin/adminPages/dashboard.dart';
 import 'package:placement_cell/components/StudentController.dart';
 import 'package:placement_cell/pages/EmailVerified.dart';
 import 'package:placement_cell/pages/home.dart';
@@ -28,8 +26,6 @@ class _LoginState extends State<Login> {
 
   AuthService _authService = AuthService();
   signIn() async {
-    email = email.trim();
-    password = password.trim();
     try {
       if (_formKey.currentState!.validate()) {
         _formKey.currentState!.save();
@@ -112,6 +108,7 @@ class _LoginState extends State<Login> {
       child: Scaffold(
         backgroundColor: k_themeColor,
         body: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
           child: Form(
             key: _formKey,
             child: Column(
@@ -123,6 +120,7 @@ class _LoginState extends State<Login> {
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Card(
+                    elevation: 5.0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(25.0),
                     ),
@@ -139,11 +137,8 @@ class _LoginState extends State<Login> {
                             size: size,
                             label: "Email",
                             icon: Icons.email_outlined,
-                            onChange: (value) {
-                              email = value;
-                            },
-                            val: (val) {
-                              return val!.isEmpty ? "Enter the email" : null;
+                            onSave: (value) {
+                              email = value!.trim();
                             },
                           ),
                           SizedBox(
@@ -155,11 +150,8 @@ class _LoginState extends State<Login> {
                             size: size,
                             label: "Password",
                             icon: Icons.lock_outline,
-                            onChange: (value) {
-                              password = value;
-                            },
-                            val: (val) {
-                              return val!.isEmpty ? "Enter the Password" : null;
+                            onSave: (value) {
+                              password = value!.trim();
                             },
                           ),
                           SizedBox(
@@ -226,8 +218,7 @@ class _LoginState extends State<Login> {
     required Size size,
     required String label,
     required IconData icon,
-    required String? Function(String? value)? val,
-    Function(String value)? onChange,
+    void Function(String? value)? onSave,
     TextInputType? type,
     bool obsText = false,
   }) {
@@ -259,9 +250,9 @@ class _LoginState extends State<Login> {
           children: <Widget>[
             TextFormField(
               obscureText: obsText,
-              validator: val,
+              validator: (value) => value!.isEmpty ? "Enter $label" : null,
               keyboardType: type,
-              onChanged: onChange,
+              onSaved: onSave,
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Colors.grey[300],

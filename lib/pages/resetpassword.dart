@@ -94,8 +94,8 @@ class _ResetPassState extends State<ResetPass> {
                   val: (val) {
                     return val!.isEmpty ? "Enter the Email" : null;
                   },
-                  onChange: (value) {
-                    email = value;
+                  onSave: (value) {
+                    email = value!.trim();
                   },
                 ),
                 SizedBox(
@@ -148,7 +148,7 @@ class _ResetPassState extends State<ResetPass> {
   Widget buildFormTile({
     required Size size,
     required String? Function(String? value)? val,
-    Function(String value)? onChange,
+    Function(String? value)? onSave,
     TextInputType? type,
   }) {
     return Padding(
@@ -158,7 +158,7 @@ class _ResetPassState extends State<ResetPass> {
           TextFormField(
             validator: val,
             keyboardType: type,
-            onChanged: onChange,
+            onSaved: onSave,
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.grey[300],

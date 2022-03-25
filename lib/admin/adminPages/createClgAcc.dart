@@ -57,10 +57,10 @@ class _ClgAccountState extends State<ClgAccount> {
         appBar: AppBar(
           leading: IconButton(
             onPressed: () {
-              Navigator.maybePop(context);
+              Navigator.pop(context);
             },
             icon: Icon(
-              Icons.chevron_left,
+              Icons.arrow_back_ios_new,
               color: Colors.black,
             ),
           ),
@@ -88,7 +88,7 @@ class _ClgAccountState extends State<ClgAccount> {
                       ),
                       children: <TextSpan>[
                         TextSpan(
-                          text: "Create ",
+                          text: "Add ",
                         ),
                         TextSpan(
                           text: "College",
@@ -103,7 +103,7 @@ class _ClgAccountState extends State<ClgAccount> {
                 Padding(
                   padding: const EdgeInsets.only(left: 20.0),
                   child: Text(
-                    "Account",
+                    "User",
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 35.0,
@@ -195,30 +195,37 @@ class _ClgAccountState extends State<ClgAccount> {
                   password: true,
                 ),
                 SizedBox(
-                  height: size.height * 0.2,
+                  height: size.height * 0.1,
+                ),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      createClgAcc();
+                    },
+                    child: Text(
+                      "Create",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20.0,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.blue,
+                      padding: EdgeInsets.symmetric(
+                          vertical: 15.0, horizontal: 60.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                          30.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: size.height * 0.05,
                 ),
               ],
-            ),
-          ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: FloatingActionButton.extended(
-          splashColor: Colors.blue[800],
-          backgroundColor: Colors.blue,
-          onPressed: () {
-            createClgAcc();
-          },
-          icon: Icon(
-            Icons.add,
-            color: Colors.black,
-            size: 28.0,
-          ),
-          label: Text(
-            "Create",
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 20.0,
             ),
           ),
         ),

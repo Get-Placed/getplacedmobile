@@ -1,13 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:placement_cell/admin/collegeAdmin/createNotices.dart';
-import 'package:placement_cell/admin/collegeAdmin/stdJobInfo.dart';
-import 'package:placement_cell/services/auth.dart';
 import 'package:placement_cell/services/values.dart';
 
 class AllJobsCollege extends StatefulWidget {
@@ -23,7 +16,7 @@ class AllJobsCollege extends StatefulWidget {
 
 class _AllJobsCollegeState extends State<AllJobsCollege> {
   late Query appliedJob;
-  AuthService _authService = AuthService();
+
   loadData() {
     appliedJob = FirebaseFirestore.instance
         .collection("Jobs")
@@ -36,116 +29,60 @@ class _AllJobsCollegeState extends State<AllJobsCollege> {
     loadData();
   }
 
-  Future<bool?> _onBackPressed() {
-    return showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(
-            20.0,
-          ),
-        ),
-        // alert on back button pressed
-        title: Text(
-          "Alert",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        content: Text(
-          "You will be logged out of Session!",
-        ),
-        actions: <Widget>[
-          TextButton(
-            child: Text(
-              "Cancel",
-            ),
-            onPressed: () => Navigator.pop(context, false),
-          ),
-          TextButton(
-            child: Text(
-              "OK",
-            ),
-            onPressed: () {
-              _authService.signOut().then(
-                    (value) => Navigator.of(context)
-                        .popUntil((route) => route.isFirst),
-                  );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return WillPopScope(
-      onWillPop: () async {
-        final shouldPop = await _onBackPressed();
-
-        return shouldPop ?? false;
-      },
-      child: Scaffold(
+    return Scaffold(
+      backgroundColor: k_themeColor,
+      appBar: AppBar(
+        iconTheme: IconThemeData(color: k_btnColor),
         backgroundColor: k_themeColor,
-        appBar: AppBar(
-          iconTheme: IconThemeData(color: Colors.black),
-          title: Text(
-            "GetPlaced",
-            style: GoogleFonts.aBeeZee(color: Colors.black, fontSize: 30.0),
-          ),
-          centerTitle: true,
-          backgroundColor: Colors.transparent,
-          elevation: 0.0,
-          systemOverlayStyle: SystemUiOverlayStyle.light,
-        ),
-        drawer: Drawer(),
-        body: Column(
-          children: <Widget>[
-            Expanded(
-              child: StreamBuilder(
-                stream: appliedJob.snapshots(),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  return !snapshot.hasData
-                      ? Center(
-                          child: CircularProgressIndicator(),
-                        )
-                      : ListView.builder(
-                          padding: EdgeInsets.only(top: 8.0),
-                          physics: BouncingScrollPhysics(),
-                          itemCount: snapshot.data.docs.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return InkWell(
-                              child: buildApplyJob(
-                                size,
-                                designation: snapshot.data.docs[index]
-                                    .data()["designation"],
-                                compName: snapshot.data.docs[index]
-                                    .data()["compName"],
-                                compOwner:
-                                    snapshot.data.docs[index].data()["owner"],
-                                logo:
-                                    snapshot.data.docs[index].data()["logoUrl"],
-                              ),
-                            );
-                          },
-                        );
-                },
-              ),
-            ),
-          ],
-        ),
-        floatingActionButton: FloatingActionButton.extended(
+        elevation: 0.0,
+        leading: IconButton(
           onPressed: () {
-            Get.to(() => CreateNotices(
-                  clgName: widget.clgName,
-                ));
+            Navigator.pop(context);
           },
-          backgroundColor: k_btnColor,
-          label: const Text("Create Notice"),
-          icon: const Icon(Icons.create),
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: k_btnColor,
+          ),
         ),
+        title: const Text(
+          "Jobs Available",
+          style: TextStyle(color: k_btnColor, fontSize: 25.0),
+        ),
+        centerTitle: true,
+      ),
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: StreamBuilder(
+              stream: appliedJob.snapshots(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                return !snapshot.hasData
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : ListView.builder(
+                        physics: BouncingScrollPhysics(),
+                        itemCount: snapshot.data.docs.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return buildApplyJob(
+                            size,
+                            designation:
+                                snapshot.data.docs[index].data()["designation"],
+                            compName:
+                                snapshot.data.docs[index].data()["compName"],
+                            compOwner:
+                                snapshot.data.docs[index].data()["owner"],
+                            logo: snapshot.data.docs[index].data()["logoUrl"],
+                          );
+                        },
+                      );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -158,23 +95,11 @@ class _AllJobsCollegeState extends State<AllJobsCollege> {
     required String compOwner,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(
-        left: 30.0,
-        right: 30.0,
-        bottom: 10.0,
-      ),
-      child: Container(
-        width: size.width,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20.0),
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black,
-              blurRadius: 5.0,
-            )
-          ],
-        ),
+      padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 5.0),
+      child: Card(
+        elevation: 8.0,
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
@@ -193,7 +118,7 @@ class _AllJobsCollegeState extends State<AllJobsCollege> {
               Text(
                 designation,
                 style: GoogleFonts.aBeeZee(
-                  fontSize: 30.0,
+                  fontSize: 20.0,
                   fontWeight: FontWeight.bold,
                 ),
               ),

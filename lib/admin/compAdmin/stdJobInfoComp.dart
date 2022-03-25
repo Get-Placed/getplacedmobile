@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -247,7 +246,7 @@ class _StudentInfoCompState extends State<StudentInfoComp> {
                             .update(
                           {
                             "acceptedBy": "Done",
-                            "status": 1,
+                            "status": "ACCEPTED",
                           },
                         ).then((value) {
                           Navigator.pop(context);
@@ -285,7 +284,7 @@ class _StudentInfoCompState extends State<StudentInfoComp> {
                             .update(
                           {
                             "acceptedBy": "Done",
-                            "status": 2,
+                            "status": "REJECTED",
                           },
                         ).then((value) {
                           Navigator.pop(context);

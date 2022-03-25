@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:placement_cell/admin/collegeAdmin/StudentPage.dart';
 import 'package:placement_cell/services/values.dart';
 
@@ -53,6 +54,10 @@ class _StudentListState extends State<StudentList> {
             color: k_btnColor,
           ),
         ),
+        title: Text(
+          "Students Registered",
+          style: GoogleFonts.aBeeZee(color: Colors.black, fontSize: 25.0),
+        ),
         backgroundColor: Colors.transparent,
         systemOverlayStyle: SystemUiOverlayStyle.dark,
         elevation: 0.0,
@@ -64,9 +69,13 @@ class _StudentListState extends State<StudentList> {
           : ListView(
               children: stdData.docs.map<Widget>((doc) {
                 return Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 15.0, vertical: 5.0),
                   child: Card(
-                    elevation: 10,
+                    elevation: 5.0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
                     child: ListTile(
                       title: Text(doc['userName']),
                       subtitle: Text(doc['email']),

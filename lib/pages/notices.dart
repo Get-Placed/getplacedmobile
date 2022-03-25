@@ -43,10 +43,19 @@ class _NoticesState extends State<Notices> {
             Navigator.pop(context);
           },
           icon: Icon(
-            Icons.arrow_back_ios,
+            Icons.arrow_back_ios_new,
             color: k_btnColor,
           ),
         ),
+        title: Text(
+          "Notices",
+          style: GoogleFonts.aBeeZee(
+            fontSize: 30.0,
+            color: Colors.blue,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
         backgroundColor: Colors.transparent,
         systemOverlayStyle: SystemUiOverlayStyle.dark,
         elevation: 0.0,
@@ -56,37 +65,28 @@ class _NoticesState extends State<Notices> {
           SizedBox(
             height: size.height * 0.04,
           ),
-          Text(
-            "Notices",
-            style: GoogleFonts.aBeeZee(
-              fontSize: 35.0,
-              color: Colors.blue,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
           Expanded(
-              child: Container(
-            child: StreamBuilder(
-              stream: notices.snapshots(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                return Container(
-                  child: !snapshot.hasData
-                      ? Center(
-                          child: CircularProgressIndicator(),
-                        )
-                      : ListView.builder(
-                          itemCount: snapshot.data.docs.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return buildNoticeCard(
-                              title: snapshot.data.docs[index].data()["title"],
-                              desc: snapshot.data.docs[index].data()["desc"],
-                              link: snapshot.data.docs[index].data()["link"],
-                            );
-                          },
-                        ),
-                );
-              },
-            ),
+              child: StreamBuilder(
+            stream: notices.snapshots(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              return Container(
+                child: !snapshot.hasData
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : ListView.builder(
+                        physics: BouncingScrollPhysics(),
+                        itemCount: snapshot.data.docs.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return buildNoticeCard(
+                            title: snapshot.data.docs[index].data()["title"],
+                            desc: snapshot.data.docs[index].data()["desc"],
+                            link: snapshot.data.docs[index].data()["link"],
+                          );
+                        },
+                      ),
+              );
+            },
           ))
         ],
       ),
@@ -99,16 +99,20 @@ class _NoticesState extends State<Notices> {
     required String link,
   }) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 0.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 3.0),
       child: InkWell(
         onTap: () async {
-          final _url = link;
-          print(_url);
-          await canLaunch(_url)
-              ? await launch(_url)
-              : throw 'Could not launch $_url';
+          if (link.isNotEmpty) {
+            final _url = link;
+            print(_url);
+            await canLaunch(_url)
+                ? await launch(_url)
+                : throw 'Could not launch $_url';
+          }
         },
         child: Card(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
           elevation: 5.0,
           child: ListTile(
             title: Text(title),

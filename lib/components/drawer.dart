@@ -36,29 +36,14 @@ class _MyDrawerState extends State<MyDrawer> {
         child: ListView(
           children: <Widget>[
             ListTile(
-              leading: Icon(
-                Icons.person_outline_rounded,
-                color: Colors.white,
-                size: 35.0,
-              ),
+              leading: Icon(Icons.person_outline_rounded,
+                  color: Colors.white, size: 30.0),
               title: Text(
-                "Welcome ${widget.userName}",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              trailing: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: Icon(
-                  Icons.menu,
-                  color: Colors.white,
-                ),
+                "Welcome, ${widget.userName}",
+                style: TextStyle(color: Colors.white, fontSize: 25.0),
               ),
             ),
+            SizedBox(height: 10.0),
             ListTile(
               onTap: () {
                 Get.to(
@@ -73,85 +58,40 @@ class _MyDrawerState extends State<MyDrawer> {
                   ),
                 );
               },
-              leading: Icon(
-                Icons.person,
-                color: Colors.white,
-              ),
+              leading: Icon(Icons.person, color: Colors.white),
               title: Text(
                 "Profile",
-                style: TextStyle(
-                  color: Colors.white,
-                ),
+                style: TextStyle(color: Colors.white, fontSize: 18.0),
               ),
             ),
             ListTile(
               onTap: () {
-                Get.to(() => Notices(
-                      clgName: widget.clgName,
-                    ));
+                Get.to(() => Notices(clgName: widget.clgName));
               },
-              leading: Icon(
-                Icons.feed_outlined,
-                color: Colors.white,
-              ),
+              leading: Icon(Icons.feed_outlined, color: Colors.white),
               title: Text(
-                "Feeds",
-                style: TextStyle(
-                  color: Colors.white,
-                ),
+                "Notices",
+                style: TextStyle(color: Colors.white, fontSize: 18.0),
               ),
             ),
             ListTile(
               onTap: () {
-                Get.to(
-                  () => RegisteredCompanies(),
-                );
+                Get.to(() => RegisteredCompanies());
               },
-              leading: Icon(
-                Icons.business_rounded,
-                color: Colors.white,
-              ),
+              leading: Icon(Icons.business_rounded, color: Colors.white),
               title: Text(
                 "Companies",
-                style: TextStyle(
-                  color: Colors.white,
-                ),
+                style: TextStyle(color: Colors.white, fontSize: 18.0),
               ),
             ),
             ListTile(
               onTap: () {
-                Get.to(() => JobStatus(
-                      userEmail: widget.userEmail,
-                    ));
+                Get.to(() => JobStatus(userEmail: widget.userEmail));
               },
-              leading: Icon(
-                Icons.track_changes_outlined,
-                color: Colors.white,
-              ),
+              leading: Icon(Icons.track_changes_outlined, color: Colors.white),
               title: Text(
                 "Job Status",
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            ListTile(
-              onTap: () {
-                _authService.signOut().then(
-                  (value) {
-                    Navigator.of(context).popUntil((route) => route.isFirst);
-                  },
-                );
-              },
-              leading: Icon(
-                Icons.power_settings_new,
-                color: Colors.white,
-              ),
-              title: Text(
-                "Logout",
-                style: TextStyle(
-                  color: Colors.white,
-                ),
+                style: TextStyle(color: Colors.white, fontSize: 18.0),
               ),
             ),
           ],

@@ -4,10 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:placement_cell/admin/collegeAdmin/AllStudentsApplied.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:placement_cell/admin/collegeAdmin/CollegeNavTab.dart';
 import 'package:placement_cell/admin/compAdmin/compNavTab.dart';
-import 'package:placement_cell/admin/dashboard.dart';
+import 'package:placement_cell/admin/adminPages/dashboard.dart';
 import 'package:placement_cell/components/StudentController.dart';
 import 'package:placement_cell/first/login.dart';
 import 'package:placement_cell/first/signup.dart';
@@ -93,10 +93,24 @@ class _MainTabState extends State<MainTab> {
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: k_themeColor,
-            title: Text(
-              "GetPlaced",
-              style: TextStyle(
-                color: k_btnColor,
+            title: RichText(
+              text: TextSpan(
+                children: [
+                  WidgetSpan(
+                    child: Icon(
+                      Icons.near_me_outlined,
+                      color: Colors.orange.shade800,
+                      size: 35.0,
+                    ),
+                  ),
+                  TextSpan(
+                    text: "GetPlaced",
+                    style: GoogleFonts.aBeeZee(
+                      color: k_btnColor,
+                      fontSize: 30.0,
+                    ),
+                  ),
+                ],
               ),
             ),
             centerTitle: true,

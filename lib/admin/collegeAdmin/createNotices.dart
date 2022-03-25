@@ -75,6 +75,9 @@ class _CreateNoticesState extends State<CreateNotices> {
                 onChange: (value) {
                   title = value;
                 },
+                valid: (val) {
+                  return val!.isEmpty ? "Enter the Title" : null;
+                },
               ),
               buildFormField(
                 label: "Link",
@@ -87,34 +90,31 @@ class _CreateNoticesState extends State<CreateNotices> {
                 onChange: (value) {
                   desc = value;
                 },
+                valid: (val) {
+                  return val!.isEmpty ? "Enter the Description" : null;
+                },
               ),
               SizedBox(
                 height: size.height * 0.08,
               ),
               Center(
-                child: ElevatedButton.icon(
+                child: ElevatedButton(
                   onPressed: () {
                     createNotices();
                   },
-                  icon: Icon(
-                    Icons.add,
-                    size: 24.0,
-                  ),
-                  label: Text(
+                  child: Text(
                     "Create",
-                    style: GoogleFonts.ubuntu(
-                      fontSize: 24.0,
-                    ),
+                    style: GoogleFonts.ubuntu(fontSize: 24.0),
                   ),
                   style: ElevatedButton.styleFrom(
                     primary: k_btnColor,
                     padding: EdgeInsets.symmetric(
-                      horizontal: 25.0,
-                      vertical: 16.0,
+                      horizontal: 50.0,
+                      vertical: 15.0,
                     ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(
-                        10.0,
+                        20.0,
                       ),
                     ),
                   ),
@@ -133,6 +133,7 @@ class _CreateNoticesState extends State<CreateNotices> {
   Widget buildFormField({
     required String label,
     required void Function(String)? onChange,
+    String? Function(String?)? valid,
     int? maxLines,
     TextInputType? keyboard,
     bool? alignLabel,
@@ -140,9 +141,7 @@ class _CreateNoticesState extends State<CreateNotices> {
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: TextFormField(
-        validator: (val) {
-          return val!.isEmpty ? "Enter the $label" : null;
-        },
+        validator: valid,
         textAlignVertical: TextAlignVertical.top,
         maxLines: maxLines,
         keyboardType: keyboard,

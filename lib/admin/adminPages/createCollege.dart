@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:placement_cell/services/database.dart';
+import 'package:placement_cell/services/values.dart';
 import 'package:random_string/random_string.dart';
 
 class CreateCollege extends StatefulWidget {
@@ -43,9 +44,24 @@ class _CreateCollegeState extends State<CreateCollege> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
+        backgroundColor: k_themeColor,
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(
+              Icons.arrow_back_ios_new,
+              color: Colors.black,
+            ),
+          ),
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+        ),
         body: Form(
           key: _formKey,
           child: ListView(
+            physics: BouncingScrollPhysics(),
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(
@@ -214,27 +230,29 @@ class _CreateCollegeState extends State<CreateCollege> {
                   },
                 ),
               ),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    createClg();
+                  },
+                  child: Text(
+                    "Add",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20.0),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.blue,
+                    padding:
+                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 50.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                  ),
+                ),
+              ),
             ],
-          ),
-        ),
-        floatingActionButton: FloatingActionButton.extended(
-          splashColor: Colors.blue[800],
-          backgroundColor: Colors.blue,
-          onPressed: () {
-            createClg();
-          },
-          icon: Icon(
-            Icons.add,
-            color: Colors.black,
-            size: 28.0,
-          ),
-          label: Text(
-            "Add",
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 20.0,
-            ),
           ),
         ),
       ),

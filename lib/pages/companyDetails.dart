@@ -57,7 +57,7 @@ class _CompanyInfoState extends State<CompanyInfo> {
   var clgData;
   DataService _dataService = DataService();
   StudentController _studentController = Get.find();
-  void applyForJob() {
+  void applyForJob() async {
     print(_studentController.student);
     int _ssc = int.tryParse(_studentController.student['ssc']) ?? 0;
     int _hsc = int.tryParse(_studentController.student['hsc']) ?? 0;
@@ -98,113 +98,89 @@ class _CompanyInfoState extends State<CompanyInfo> {
     print("hsc: $_hsc");
     print("cgpa: $_cgpa");
 
-    if (_ssc >= widget.ssc && _hsc >= widget.hsc && _cgpa >= widget.cgpa) {
-      FirebaseFirestore.instance
-          .collection('Applied Jobs')
-          .where(
-            'userEmail',
-            isEqualTo: widget.userEmail,
-          )
-          .where('status', isEqualTo: "ACCEPTED")
-          .get()
-          .then((value) {
-        print(value.docs);
-        if (value.docs.length == 0) {
-          setState(() {
-            appliedID = widget.jobID + widget.userEmail;
-          });
-          Map<String, dynamic> appliedJobData = {
-            "appliedName": widget.userName,
-            "clgName": widget.clgName,
-            "branch": widget.branch,
-            "designation": widget.designation,
-            "salary": widget.lpa,
-            "logoUrl": widget.logo,
-            "compName": widget.compName,
-            "owner": widget.owner,
-            "userEmail": widget.userEmail,
-            "jobid": widget.jobID,
-            "acceptedBy": "clg ${widget.compName}",
-            "status": "APPLIED"
-          };
-          _dataService.appliedJobs(appliedJobData, appliedID).then((value) {
-            Get.snackbar(widget.compName,
-                "Job has been applied for ${widget.designation}");
-            loadData();
-          });
-          Get.to(WebView(
-            initialUrl: widget.joblink,
-          ));
-        }
-        value.docs.forEach((doc) {
-          print(doc);
-          var salaryData = doc.data()['salary'];
-          print("Salary Data ${salaryData}");
-          int lpa = int.tryParse(salaryData) ?? 0;
-          // Dont apply for job if salaryData and lpa both in range of salaryRange1 and salaryRange2
-          print("Previous LPA: $lpa");
-          print("Current LPA: ${widget.lpa}");
-          if ((lpa >= salaryRange1 && lpa <= salaryRange2) &&
-              (int.parse(widget.lpa) >= salaryRange1 &&
-                  int.parse(widget.lpa) <= salaryRange2)) {
-            Get.snackbar(
-              "ERROR",
-              "Your Last Placed Salary is in range of current job , Please apply for another job",
-              snackPosition: SnackPosition.TOP,
-              backgroundColor: Colors.red,
-              duration: Duration(seconds: 2),
-              margin: EdgeInsets.all(10),
-              colorText: Colors.white,
-            );
-          } else if ((lpa >= salaryRange2 && lpa <= salaryRange3) &&
-              (int.parse(widget.lpa) >= salaryRange2 &&
-                  int.parse(widget.lpa) <= salaryRange3)) {
-            Get.snackbar(
-              "ERROR",
-              "Your Last Placed Salary is in range of current job , Please apply for another job",
-              snackPosition: SnackPosition.TOP,
-              backgroundColor: Colors.red,
-              duration: Duration(seconds: 2),
-              margin: EdgeInsets.all(10),
-              colorText: Colors.white,
-            );
-          } else if (lpa > int.parse(widget.lpa)) {
-            Get.snackbar("ERROR",
-                "You cannot apply for this job as you already have a job with more LPA",
-                colorText: Colors.white, backgroundColor: Colors.red);
-
-            return;
-          } else {
-            setState(() {
-              appliedID = widget.jobID + widget.userEmail;
-            });
-            Map<String, dynamic> appliedJobData = {
-              "appliedName": widget.userName,
-              "clgName": widget.clgName,
-              "branch": widget.branch,
-              "designation": widget.designation,
-              "salary": widget.lpa,
-              "logoUrl": widget.logo,
-              "compName": widget.compName,
-              "owner": widget.owner,
-              "userEmail": widget.userEmail,
-              "jobid": widget.jobID,
-              "acceptedBy": "clg ${widget.compName}",
-              "status": "APPLIED"
-            };
-            _dataService.appliedJobs(appliedJobData, appliedID).then((value) {
-              Get.snackbar(widget.compName,
-                  "Job has been applied for ${widget.designation}");
-              loadData();
-            });
-            Get.to(WebView(
-              initialUrl: widget.joblink,
-            ));
-          }
-        });
-      });
-    } else {
+    if (_ssc < widget.ssc || _hsc < widget.hsc || _cgpa < widget.cgpa) {
       Get.snackbar("ERROR", "You don't match the eligibility Criteria!");
+      return;
+    }
+
+    QuerySnapshot<Map<String, dynamic>> query = await FirebaseFirestore.instance
+        .collection('Applied Jobs')
+        .where(
+          'userEmail',
+          isEqualTo: widget.userEmail,
+        )
+        .where('status', isEqualTo: "ACCEPTED")
+        .get();
+
+    if (query.docs.length != 0) {
+      query.docs.sort((a, b) => int.parse(b.data()['salary'])
+          .compareTo(int.parse(a.data()['salary'])));
+      var salaryData = query.docs[0].data()['salary'];
+      print("Salary Data $salaryData");
+      int lpa = int.tryParse(salaryData) ?? 0;
+      // Dont apply for job if salaryData and lpa both in range of salaryRange1 and salaryRange2
+      print("Previous LPA: $lpa");
+      print("Current LPA: ${widget.lpa}");
+      if ((lpa >= salaryRange1 && lpa <= salaryRange2) &&
+          (int.parse(widget.lpa) >= salaryRange1 &&
+              int.parse(widget.lpa) <= salaryRange2)) {
+        Get.snackbar(
+          "ERROR",
+          "Your Last Placed Salary is in range of current job , Please apply for another job",
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 2),
+          margin: EdgeInsets.all(10),
+          colorText: Colors.white,
+        );
+        return;
+      } else if ((lpa >= salaryRange2 && lpa <= salaryRange3) &&
+          (int.parse(widget.lpa) >= salaryRange2 &&
+              int.parse(widget.lpa) <= salaryRange3)) {
+        Get.snackbar(
+          "ERROR",
+          "Your Last Placed Salary is in range of current job , Please apply for another job",
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 2),
+          margin: EdgeInsets.all(10),
+          colorText: Colors.white,
+        );
+        return;
+      } else if (lpa > int.parse(widget.lpa)) {
+        Get.snackbar(
+          "ERROR",
+          "You cannot apply for this job as you already have a job with more LPA",
+          colorText: Colors.white,
+          backgroundColor: Colors.red,
+        );
+        return;
+      }
+    }
+    setState(() {
+      appliedID = widget.jobID + widget.userEmail;
+    });
+    Map<String, dynamic> appliedJobData = {
+      "appliedName": widget.userName,
+      "clgName": widget.clgName,
+      "branch": widget.branch,
+      "designation": widget.designation,
+      "salary": widget.lpa,
+      "logoUrl": widget.logo,
+      "compName": widget.compName,
+      "owner": widget.owner,
+      "userEmail": widget.userEmail,
+      "jobid": widget.jobID,
+      "acceptedBy": "clg ${widget.compName}",
+      "status": "APPLIED"
+    };
+    _dataService.appliedJobs(appliedJobData, appliedID).then((value) {
+      Get.snackbar(
+          widget.compName, "Job has been applied for ${widget.designation}");
+      loadData();
+    });
+    if (widget.joblink.isNotEmpty) {
+      Get.to(WebView(initialUrl: widget.joblink));
     }
   }
 
